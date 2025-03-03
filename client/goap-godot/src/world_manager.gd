@@ -37,6 +37,7 @@ func _draw() -> void:
 						color.a = 0.5
 						draw_circle(point_pos, 2, color)
 
+
 func _setup_entities():
 	for entity: Node2D in entities_layer.get_children():
 		entity.global_position = snap_to_grid(entity.global_position)

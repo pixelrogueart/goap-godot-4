@@ -5,6 +5,9 @@ extends Node
 var _world_state: GoapWorldState
 var _actor
 
+@export var effects: Dictionary
+@export var preconditions: Dictionary
+@export var cost: int = 1
 
 func init(actor, world_state) -> void:
 	_actor = actor

@@ -54,6 +54,14 @@ func has_path() -> bool:
 	return path.size() > 0
 
 
+func find_closest_entity(target_group: String): 
+	pass
+
+
+func find_entities(target_group: String) -> Array: 
+	return []
+
+
 func is_next_to_target() -> bool:
 		#var targe_id = tile_map.local_to_map(target_point)
 	var target_id = world_node.to_grid_id(target_position)
@@ -68,10 +76,10 @@ func has_reached_target() -> bool:
 	return world_node.is_at_grid_position(self, target_position)
 
 
-func tween_to_target() -> void:
+func tween_to_target(_speed = 0.3) -> void:
 	var new_position = world_node.snap_to_grid(global_position)
 	var tween: Tween = create_tween()
-	tween.tween_property(self, "global_position", new_position, 0.1)
+	tween.tween_property(self, "global_position", new_position, _speed)
 
 
 func calculate_path(target_pos: Vector2) -> Array:

@@ -11,7 +11,6 @@ func enter() -> void:
 
 func physics_process(_delta: float) -> void:
 	super.physics_process(_delta)
-
 	var direction = (_pawn.step_position - _pawn.global_position).normalized()
 	_pawn.velocity = direction * move_speed
 	if _pawn.world_node.is_at_grid_position(_pawn, _pawn.step_position) and _pawn.global_position.distance_to(_pawn.step_position) <= _pawn.reach_distance:
@@ -21,8 +20,8 @@ func physics_process(_delta: float) -> void:
 		if _pawn.path.size() > 0:
 			update_step_position()
 			_pawn.path.remove_at(0)
-
 	_pawn.move_and_slide()
+
 
 	if _pawn.has_reached_target():
 		_pawn.tween_to_target()

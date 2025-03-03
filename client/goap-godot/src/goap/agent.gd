@@ -20,7 +20,7 @@ func _process(delta):
 	if _current_goal == null or goal != _current_goal:
 		if _actor:
 			var blackboard = {
-				"position": _actor.position,
+				"global_position": _actor.global_position,
 				}
 
 			for s in _world_state._state:
@@ -40,16 +40,16 @@ func init(actor):
 	_action_planner = GoapActionPlanner.new()
 	_action_planner.set_actions(actions)
 	for goal in _goals:
-		goal.init(_world_state)
+		goal.init(_actor, _world_state)
 	for action in actions:
-		action.init(_actor,_world_state)
+		action.init(_actor, _world_state)
 
 
 func _get_best_goal():
 	var highest_priority
 
 	for goal in _goals:
-		if goal.is_valid() and (highest_priority == null or goal.priority() > highest_priority.priority()):
+		if goal.is_valid() and (highest_priority == null or goal.get_priority() > highest_priority.get_priority()):
 			highest_priority = goal
 
 	return highest_priority

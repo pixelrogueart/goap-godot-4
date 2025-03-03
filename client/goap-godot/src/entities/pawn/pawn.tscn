@@ -1,11 +1,16 @@
-[gd_scene load_steps=7 format=3 uid="uid://bmh8e778cm4wa"]
+[gd_scene load_steps=12 format=3 uid="uid://bmh8e778cm4wa"]
 
 [ext_resource type="Script" path="res://src/entities/pawn/pawn.gd" id="1_1ileu"]
 [ext_resource type="Texture2D" uid="uid://ca6t5rlmqvr6a" path="res://assets/kenney-medieval-rts/PNG/Default size/Unit/medievalUnit_06.png" id="1_aphg3"]
 [ext_resource type="Script" path="res://src/goap/agent.gd" id="2_0hrp4"]
 [ext_resource type="Script" path="res://src/state-machine/StateManager.gd" id="4_iqnt5"]
+[ext_resource type="Script" path="res://src/entities/pawn/actions/interact.gd" id="4_nod00"]
 [ext_resource type="Script" path="res://src/entities/pawn/states/pawn_idle_state.gd" id="5_8kx63"]
+[ext_resource type="Script" path="res://src/entities/pawn/actions/move_to.gd" id="5_x6gcv"]
 [ext_resource type="Script" path="res://src/entities/pawn/states/pawn_move_state.gd" id="6_fs0un"]
+[ext_resource type="Script" path="res://src/entities/pawn/actions/wait.gd" id="6_l2x3u"]
+[ext_resource type="Script" path="res://src/entities/pawn/goals/relax.gd" id="7_2jg5b"]
+[ext_resource type="Script" path="res://src/entities/pawn/goals/keep_firepit.gd" id="8_iltw4"]
 
 [node name="Pawn" type="CharacterBody2D" node_paths=PackedStringArray("state_manager")]
 script = ExtResource("1_1ileu")
@@ -16,6 +21,34 @@ texture = ExtResource("1_aphg3")
 
 [node name="GoapAgent" type="Node" parent="."]
 script = ExtResource("2_0hrp4")
+
+[node name="Actions" type="Node" parent="GoapAgent"]
+
+[node name="Interact" type="Node" parent="GoapAgent/Actions"]
+script = ExtResource("4_nod00")
+target_group = "tree"
+method_interaction = "chop"
+effects = {
+"has_wood": true
+}
+
+[node name="MoveTo" type="Node" parent="GoapAgent/Actions"]
+script = ExtResource("5_x6gcv")
+
+[node name="Wait" type="Node" parent="GoapAgent/Actions"]
+script = ExtResource("6_l2x3u")
+
+[node name="Goals" type="Node" parent="GoapAgent"]
+
+[node name="Relax" type="Node" parent="GoapAgent/Goals"]
+script = ExtResource("7_2jg5b")
+
+[node name="KeepFirePit" type="Node" parent="GoapAgent/Goals"]
+script = ExtResource("8_iltw4")
+priority = 1
+desired_state = {
+"has_firepit": true
+}
 
 [node name="StateManager" type="Node" parent="."]
 script = ExtResource("4_iqnt5")
