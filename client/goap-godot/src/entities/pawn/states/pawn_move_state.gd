@@ -22,7 +22,6 @@ func physics_process(_delta: float) -> void:
 			_pawn.path.remove_at(0)
 	_pawn.move_and_slide()
 
-
 	if _pawn.has_reached_target():
 		_pawn.tween_to_target()
 		_pawn.change_state("Idle")

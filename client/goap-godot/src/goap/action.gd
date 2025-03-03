@@ -9,9 +9,13 @@ var _actor
 @export var preconditions: Dictionary
 @export var cost: int = 1
 
+
 func init(actor, world_state) -> void:
 	_actor = actor
 	_world_state = world_state
+
+
+func get_action_name(): return self.name
 
 
 func is_valid() -> bool:

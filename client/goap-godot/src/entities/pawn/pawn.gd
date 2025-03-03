@@ -20,6 +20,8 @@ var current_state: String
 func _ready():
 	state_manager.init(self)
 	goap_agent.init(self)
+	goap_agent._world_state.set_state("storage_empty", true)
+	goap_agent._world_state.set_state("has_wood", false)
 
 
 func change_state(new_state: String):
@@ -56,21 +58,22 @@ func has_path() -> bool:
 	return path.size() > 0
 
 
-func find_closest_entity(target_group: String):
-	var entities = find_entities(target_group)
-	var closest_path = []
-	var closest_entity = null
-	for e in entities:
-		var path = calculate_path(e.global_position)
-		if closest_path.is_empty():
-			closest_entity = e
-		if path.size() < closest_path.size():
-			closest_entity = e
-	return closest_entity
+func find_closest_entity(group_name):
+	var elements = find_entities(group_name)
+	var closest_element
+	var closest_distance = 10000000
+
+	for element in elements:
+		var distance = self.global_position.distance_to(element.global_position)
+		if  distance < closest_distance:
+			closest_distance = distance
+			closest_element = element
+
+	return closest_element
 
 
 func find_entities(target_group: String) -> Array: 
-	return get_tree().get_nodes_in_group("target_group")
+	return get_tree().get_nodes_in_group(target_group)
 
 
 func is_next_to_target() -> bool:
@@ -82,6 +85,7 @@ func is_next_to_target() -> bool:
 
 
 func has_reached_target() -> bool:
+	#print("Reached target: %s"%world_node.is_at_grid_position(self, target_position))
 	return world_node.is_at_grid_position(self, target_position)
 
 
@@ -92,10 +96,11 @@ func tween_to_target(_speed = 0.3) -> void:
 
 
 func calculate_path(target_pos: Vector2) -> Array:
+	var updated_target_id = world_node.find_closest_available_position(world_node.to_grid_id(target_pos), 2)
+	target_position = world_node.get_point_position(updated_target_id)
 	var start_id = world_node.to_grid_id(global_position)
-	var end_id = world_node.to_grid_id(target_pos)
+	var end_id = updated_target_id
 	var calculated_path = []
-	target_position = target_pos
 	if world_node.grid.is_in_boundsv(start_id) and world_node.grid.is_in_boundsv(end_id):
 		calculated_path = world_node.grid.get_id_path(start_id, end_id)
 	return calculated_path

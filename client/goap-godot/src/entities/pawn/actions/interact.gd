@@ -12,7 +12,7 @@ func is_valid() -> bool:
 
 func get_cost(blackboard) -> int:
 	if blackboard.has("global_position"):
-		var closest_entity = _actor.find_closest_entity(target_group, blackboard)
+		var closest_entity = _actor.find_closest_entity(target_group)
 		return int(closest_entity.global_position.distance_to(blackboard.global_position) / 7)
 	return cost
 
@@ -26,13 +26,13 @@ func get_effects() -> Dictionary:
 
 
 func perform(actor, delta) -> bool:
-	var _closest_entity = _actor.get_closest_element(target_group)
-
+	var _closest_entity = _actor.find_closest_entity(target_group)
 	if _closest_entity:
 		if actor.world_node.is_next_to_grid_position(actor, _closest_entity.global_position):
-				if _closest_entity.call(method_interaction):
-					return true
-				return false
+			if _closest_entity.call(method_interaction):
+				return true
+			return false
 		else:
-			actor.set_move_target(_closest_entity.global_position)
+			if actor.current_state != "Move":
+				actor.set_move_target(_closest_entity.global_position)
 	return false

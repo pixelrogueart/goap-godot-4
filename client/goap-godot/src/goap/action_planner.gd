@@ -3,13 +3,17 @@ extends Node
 
 
 var _actions: Array[GoapAction]
-
+var _log
 
 func set_actions(actions: Array):
 	_actions = actions
 
 
+func console_message(text) -> void:
+	print(text)
+
 func get_plan(goal: GoapGoal, blackboard = {}) -> Array:
+	console_message("Goal: %s" % goal.get_action_name())
 	var desired_state = goal.get_desired_state().duplicate()
 
 	if desired_state.is_empty():
@@ -106,5 +110,6 @@ func _transform_tree_into_array(p, blackboard):
 func _print_plan(plan):
 	var actions = []
 	for a in plan.actions:
-		actions.push_back(a.get_clazz())
+		actions.push_back(a.get_action_name())
 	print({"cost": plan.cost, "actions": actions})
+	console_message({"cost": plan.cost, "actions": actions})

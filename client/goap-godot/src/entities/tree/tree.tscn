@@ -11,7 +11,7 @@ region = Rect2(1649, 718, 29, 33)
 atlas = ExtResource("2_veqcs")
 region = Rect2(1069, 659, 39, 89)
 
-[node name="Tree" type="Node2D"]
+[node name="Tree" type="Node2D" groups=["tree"]]
 script = ExtResource("1_8h3xn")
 
 [node name="ChoppedSprite2D" type="Sprite2D" parent="."]

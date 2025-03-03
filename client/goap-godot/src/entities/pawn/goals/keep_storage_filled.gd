@@ -1,8 +1,9 @@
 class_name KeepStorageFilled
 extends GoapGoal
 
+
 func is_valid() -> bool:
-	return _actor.find_entities("storage").size() == 0
+	return _actor.find_entities("storage").size() > 0
 
 
 func get_priority() -> int:

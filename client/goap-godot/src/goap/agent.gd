@@ -14,6 +14,7 @@ var _action_planner: GoapActionPlanner
 @export var actions: Array[GoapAction]
 @export var goals: Array[GoapGoal]
 
+var last_blackboard = {}
 
 func _process(delta):
 	var goal = _get_best_goal()
@@ -29,6 +30,7 @@ func _process(delta):
 			_current_goal = goal
 			_current_plan = _action_planner.get_plan(_current_goal, blackboard)
 			_current_plan_step = 0
+			last_blackboard = blackboard
 	else:
 		_follow_plan(_current_plan, delta)
 
@@ -47,11 +49,11 @@ func init(actor):
 
 func _get_best_goal():
 	var highest_priority
-
 	for goal in _goals:
 		if goal.is_valid() and (highest_priority == null or goal.get_priority() > highest_priority.get_priority()):
 			highest_priority = goal
 
+		#print("Is %s valid? %s "%[goal.get_action_name(), goal.is_valid()])
 	return highest_priority
 
 

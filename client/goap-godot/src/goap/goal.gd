@@ -6,6 +6,8 @@ var _world_state: GoapWorldState
 @export var priority: int
 @export var desired_state: Dictionary
 
+func get_action_name(): return self.name
+
 
 func init(actor, world_state) -> void:
 	_actor = actor
@@ -21,4 +23,4 @@ func get_priority() -> int:
 
 
 func get_desired_state() -> Dictionary:
-	return {}
+	return desired_state

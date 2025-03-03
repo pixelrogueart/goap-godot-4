@@ -7,15 +7,11 @@ func get_cost(_blackboard) -> int:
 
 
 func get_preconditions() -> Dictionary:
-	return {
-		"protected": true
-	}
+	return preconditions
 
 
 func get_effects() -> Dictionary:
-	return {
-		"is_frightened": false
-	}
+	return effects
 
 
 func perform(actor, _delta) -> bool:

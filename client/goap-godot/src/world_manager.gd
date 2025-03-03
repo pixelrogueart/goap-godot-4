@@ -95,6 +95,18 @@ func _generate_world():
 		new_tree.global_position = picked_pos * cell_size
 
 
+func find_closest_available_position(reference_pos: Vector2i, radius: int = 5) -> Vector2i:
+	for r in range(1, radius + 1):  # Expand search outward
+		for x in range(-r, r + 1):
+			for y in range(-r, r + 1):
+				var candidate_pos = reference_pos + Vector2i(x, y)
+				if candidate_pos.x >= 0 and candidate_pos.y >= 0 and candidate_pos.x < world_size.x and candidate_pos.y < world_size.y:
+					if candidate_pos not in picked_positions:
+						picked_positions.push_back(candidate_pos)
+						return candidate_pos
+	return reference_pos
+
+
 func pick_random_position():
 	var picked_pos = Vector2i(randi_range(0, world_size.x - 1), randi_range(0, world_size.y - 1))
 	while picked_pos in picked_positions:
