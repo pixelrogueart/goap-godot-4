@@ -94,6 +94,9 @@ func tween_to_target(_speed = 0.3) -> void:
 	var tween: Tween = create_tween()
 	tween.tween_property(self, "global_position", new_position, _speed)
 
+func stop_moving() -> void:
+	tween_to_target()
+	change_state("Idle")
 
 func calculate_path(target_pos: Vector2) -> Array:
 	var updated_target_id = world_node.find_closest_available_position(world_node.to_grid_id(target_pos), 2)

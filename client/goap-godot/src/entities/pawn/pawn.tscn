@@ -32,6 +32,7 @@ goals = [NodePath("Goals/Relax"), NodePath("Goals/KeepStorageFilled")]
 script = ExtResource("4_nod00")
 target_group = "tree"
 method_interaction = "chop"
+validation_method = "can_chop"
 effects = {
 "has_wood": true
 }
@@ -40,6 +41,7 @@ effects = {
 script = ExtResource("4_nod00")
 target_group = "storage"
 method_interaction = "insert_wood"
+validation_method = "can_insert_wood"
 effects = {
 "storage_empty": false
 }
