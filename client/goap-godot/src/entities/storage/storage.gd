@@ -3,7 +3,7 @@ extends Node2D
 
 
 var wood_amount = 0
-var storage_space = 10
+var storage_space = 3
 
 
 func insert_wood():
@@ -18,3 +18,6 @@ func update_state() -> void:
 		$Sprite2D/MedievalEnvironment06.show()
 	if wood_amount > 5:
 		$Sprite2D/MedievalEnvironment07.show()
+
+func has_space():
+	return wood_amount < storage_space
