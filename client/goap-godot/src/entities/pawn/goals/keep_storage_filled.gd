@@ -1,8 +1,8 @@
-class_name KeepFirepitBurningGoal
+class_name KeepStorageFilled
 extends GoapGoal
 
 func is_valid() -> bool:
-	return _actor.find_entities("firepit").size() == 0
+	return _actor.find_entities("storage").size() == 0
 
 
 func get_priority() -> int:

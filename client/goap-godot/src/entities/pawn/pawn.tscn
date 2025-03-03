@@ -10,17 +10,20 @@
 [ext_resource type="Script" path="res://src/entities/pawn/states/pawn_move_state.gd" id="6_fs0un"]
 [ext_resource type="Script" path="res://src/entities/pawn/actions/wait.gd" id="6_l2x3u"]
 [ext_resource type="Script" path="res://src/entities/pawn/goals/relax.gd" id="7_2jg5b"]
-[ext_resource type="Script" path="res://src/entities/pawn/goals/keep_firepit.gd" id="8_iltw4"]
+[ext_resource type="Script" path="res://src/entities/pawn/goals/keep_storage_filled.gd" id="8_iltw4"]
 
-[node name="Pawn" type="CharacterBody2D" node_paths=PackedStringArray("state_manager")]
+[node name="Pawn" type="CharacterBody2D" node_paths=PackedStringArray("state_manager", "goap_agent")]
 script = ExtResource("1_1ileu")
 state_manager = NodePath("StateManager")
+goap_agent = NodePath("GoapAgent")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_aphg3")
 
-[node name="GoapAgent" type="Node" parent="."]
+[node name="GoapAgent" type="Node" parent="." node_paths=PackedStringArray("actions", "goals")]
 script = ExtResource("2_0hrp4")
+actions = [NodePath("Actions/Interact"), NodePath("Actions/MoveTo"), NodePath("Actions/Wait")]
+goals = [NodePath("Goals/Relax"), NodePath("Goals/KeepStorageFilled")]
 
 [node name="Actions" type="Node" parent="GoapAgent"]
 
@@ -43,11 +46,11 @@ script = ExtResource("6_l2x3u")
 [node name="Relax" type="Node" parent="GoapAgent/Goals"]
 script = ExtResource("7_2jg5b")
 
-[node name="KeepFirePit" type="Node" parent="GoapAgent/Goals"]
+[node name="KeepStorageFilled" type="Node" parent="GoapAgent/Goals"]
 script = ExtResource("8_iltw4")
 priority = 1
 desired_state = {
-"has_firepit": true
+"has_storage": true
 }
 
 [node name="StateManager" type="Node" parent="."]

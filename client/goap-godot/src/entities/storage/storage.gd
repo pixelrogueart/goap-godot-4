@@ -1,0 +1,2 @@
+class_name StorageEntity
+extends Node2D

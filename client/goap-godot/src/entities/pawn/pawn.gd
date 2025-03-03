@@ -5,6 +5,7 @@ extends CharacterBody2D
 @onready var debug_goap_label = %DebugGoapAction
 
 @export var state_manager: StateManager
+@export var goap_agent: GoapAgent
 @export var reach_distance: int = 5
 
 var world_node: WorldManager
@@ -18,6 +19,7 @@ var current_state: String
 
 func _ready():
 	state_manager.init(self)
+	goap_agent.init(self)
 
 
 func change_state(new_state: String):
@@ -54,18 +56,25 @@ func has_path() -> bool:
 	return path.size() > 0
 
 
-func find_closest_entity(target_group: String): 
-	pass
+func find_closest_entity(target_group: String):
+	var entities = find_entities(target_group)
+	var closest_path = []
+	var closest_entity = null
+	for e in entities:
+		var path = calculate_path(e.global_position)
+		if closest_path.is_empty():
+			closest_entity = e
+		if path.size() < closest_path.size():
+			closest_entity = e
+	return closest_entity
 
 
 func find_entities(target_group: String) -> Array: 
-	return []
+	return get_tree().get_nodes_in_group("target_group")
 
 
 func is_next_to_target() -> bool:
-		#var targe_id = tile_map.local_to_map(target_point)
 	var target_id = world_node.to_grid_id(target_position)
-	#var pawn_id = tile_map.local_to_map(_pawn.global_position)
 	var pawn_id = world_node.to_grid_id(global_position)
 	if abs(target_id.x - pawn_id.x) > 1 or abs(target_id.y - pawn_id.y):
 		return false

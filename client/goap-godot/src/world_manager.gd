@@ -6,9 +6,11 @@ extends Node2D
 
 @onready var floor_layer: TileMapLayer = %FloorLayer
 @onready var entities_layer: Node2D = %EntitiesLayer
+@onready var tree_scene = load("res://src/entities/tree/tree.tscn")
+@onready var house_scene = load("res://src/entities/house/house.tscn")
+@onready var storage_scene = load("res://src/entities/storage/storage.tscn")
 
-var tree_scene = load("res://src/entities/tree.tscn")
-var house_scene = load("res://src/entities/house.tscn")
+var world_size: Vector2
 
 var cell_size: int = 64
 var grid: AStarGrid2D = AStarGrid2D.new()
@@ -16,7 +18,11 @@ var grid: AStarGrid2D = AStarGrid2D.new()
 var mouse_position:Vector2 = Vector2.ZERO
 var last_pawn_position:Vector2 = Vector2.ZERO
 
+var picked_positions = []
+
+
 func _ready() -> void:
+	randomize()
 	_generate_world()
 	_generate_grid()
 	_setup_entities()
@@ -41,34 +47,60 @@ func _draw() -> void:
 func _setup_entities():
 	for entity: Node2D in entities_layer.get_children():
 		entity.global_position = snap_to_grid(entity.global_position)
-		entity.world_node = self
+		if entity is PawnEntity:
+			entity.world_node = self
+		else:
+			grid.set_point_solid(to_grid_coords(entity.global_position),true)
 
 
 func _generate_grid() -> void:
-	var used_cells = floor_layer.get_used_cells()
-	if used_cells.is_empty():
-		return
-
-	var min_x = used_cells[0].x
-	var min_y = used_cells[0].y
-	var max_x = used_cells[0].x
-	var max_y = used_cells[0].y
-
-	for cell in used_cells:
-		min_x = min(min_x, cell.x)
-		min_y = min(min_y, cell.y)
-		max_x = max(max_x, cell.x)
-		max_y = max(max_y, cell.y)
-
-	var world_size = Vector2i(max_x - min_x + 1, max_y - min_y + 1)
-
 	grid.region = Rect2i(0, 0, world_size.x, world_size.y)
 	grid.cell_size = Vector2(cell_size, cell_size)
 	grid.update()
 
 
 func _generate_world():
-	pass
+	var used_cells = floor_layer.get_used_cells()
+	if used_cells.is_empty():
+		return
+
+	# Find world bounds
+	var min_x = used_cells[0].x
+	var min_y = used_cells[0].y
+	var max_x = used_cells[0].x
+	var max_y = used_cells[0].y
+	for cell in used_cells:
+		min_x = min(min_x, cell.x)
+		min_y = min(min_y, cell.y)
+		max_x = max(max_x, cell.x)
+		max_y = max(max_y, cell.y)
+
+	world_size = Vector2i(max_x - min_x + 1, max_y - min_y + 1)
+
+	# Store already picked positions
+	var house = house_scene.instantiate()
+	entities_layer.add_child(house)
+	var storage = storage_scene.instantiate()
+	entities_layer.add_child(storage)
+	
+	house.global_position = pick_random_position() * cell_size
+	storage.global_position = pick_random_position() * cell_size
+	# Generate trees
+	for i in range(tree_amount):
+		var new_tree = tree_scene.instantiate()
+		entities_layer.add_child(new_tree)
+		# Find a unique position
+		var picked_pos = pick_random_position()
+		# Store the position and set tree position
+		new_tree.global_position = picked_pos * cell_size
+
+
+func pick_random_position():
+	var picked_pos = Vector2i(randi_range(0, world_size.x - 1), randi_range(0, world_size.y - 1))
+	while picked_pos in picked_positions:
+		picked_pos = Vector2i(randi_range(0, world_size.x - 1), randi_range(0, world_size.y - 1))
+	picked_positions.push_back(picked_pos)
+	return picked_pos
 
 
 func _unhandled_input(event: InputEvent) -> void:
