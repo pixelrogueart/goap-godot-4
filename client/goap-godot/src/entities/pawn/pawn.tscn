@@ -33,6 +33,7 @@ script = ExtResource("4_nod00")
 target_group = "tree"
 method_interaction = "chop"
 validation_method = "can_chop"
+actor_method_interaction = "add_wood"
 effects = {
 "has_wood": true
 }
@@ -42,7 +43,10 @@ script = ExtResource("4_nod00")
 target_group = "storage"
 method_interaction = "insert_wood"
 validation_method = "can_insert_wood"
+actor_method_interaction = "remove_wood"
+actor_validation_method = "has_wood"
 effects = {
+"has_wood": false,
 "storage_empty": false
 }
 preconditions = {

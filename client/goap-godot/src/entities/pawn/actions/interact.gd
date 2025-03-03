@@ -3,8 +3,14 @@ class_name InteractAction
 
 
 @export var target_group: String
+
 @export var method_interaction: String
 @export var validation_method: String
+
+@export var actor_method_interaction: String
+@export var actor_validation_method: String
+
+
 @export var interaction_cooldown: float = 1.0
 
 var cooldown_timer: Timer = Timer.new()
@@ -38,13 +44,11 @@ func perform(actor, delta) -> bool:
 		if actor.world_node.is_next_to_grid_position(actor, _closest_entity.global_position):
 			_actor.stop_moving()
 			if cooldown_timer.is_stopped():
-				if !_closest_entity.call(validation_method):
+				if _closest_entity.call(method_interaction):
 					for effect in effects.keys():
 						_world_state.set_state(effect, effects[effect])
 					return true
-				else:
-					_closest_entity.call(method_interaction)
-					cooldown_timer.start(interaction_cooldown)
+				cooldown_timer.start(interaction_cooldown)
 			return false
 		else:
 			if actor.current_state != "Move":

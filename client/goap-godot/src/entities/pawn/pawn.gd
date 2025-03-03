@@ -17,6 +17,9 @@ var target_position = null
 var current_state: String
 
 
+var wood: int = 0
+
+
 func _ready():
 	state_manager.init(self)
 	goap_agent.init(self)
@@ -121,3 +124,14 @@ func set_target_to_entity(_new_target) -> void:
 	path = calculate_path(updated_target_id)
 	if path:
 		change_state("Move")
+
+
+func has_wood() -> bool:
+	return wood > 0
+
+func add_wood():
+	wood += 1
+
+
+func remove_wood():
+	wood -= 1

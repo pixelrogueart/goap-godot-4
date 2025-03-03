@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://bcql0eelelmi8"]
+[gd_scene load_steps=8 format=3 uid="uid://bcql0eelelmi8"]
 
 [ext_resource type="Script" path="res://src/entities/tree/tree.gd" id="1_8h3xn"]
 [ext_resource type="Texture2D" uid="uid://cl3ur4bhbe24d" path="res://assets/kenney-medieval-rts/Tilesheet/RTS_medieval@2.png" id="2_veqcs"]
@@ -11,6 +11,43 @@ region = Rect2(1649, 718, 29, 33)
 atlas = ExtResource("2_veqcs")
 region = Rect2(1069, 659, 39, 89)
 
+[sub_resource type="Animation" id="Animation_i8pi3"]
+resource_name = "chop"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("GrownSprite2D:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3),
+"transitions": PackedFloat32Array(2.07053, 2.07053, 2.07053),
+"update": 0,
+"values": [0.0, 0.159181, 0.0]
+}
+
+[sub_resource type="Animation" id="Animation_v7hg4"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("GrownSprite2D:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6ei70"]
+_data = {
+"RESET": SubResource("Animation_v7hg4"),
+"chop": SubResource("Animation_i8pi3")
+}
+
 [node name="Tree" type="Node2D" groups=["tree"]]
 script = ExtResource("1_8h3xn")
 
@@ -19,4 +56,11 @@ position = Vector2(0, 33)
 texture = SubResource("AtlasTexture_qu7gi")
 
 [node name="GrownSprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, 33)
 texture = SubResource("AtlasTexture_jw6ei")
+offset = Vector2(0, -33.855)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_6ei70")
+}
