@@ -10,14 +10,15 @@ func insert_wood():
 	wood_amount += 1
 	update_state()
 	print("Inserted Wood! Wood amount: %s"%wood_amount)
-	return storage_space < wood_amount
+	return storage_space <= wood_amount
 
 
 func update_state() -> void: 
 	if wood_amount > 0:
 		$Sprite2D/MedievalEnvironment06.show()
-	if wood_amount > 5:
+	if wood_amount == storage_space:
 		$Sprite2D/MedievalEnvironment07.show()
+
 
 func has_space():
 	return wood_amount < storage_space
