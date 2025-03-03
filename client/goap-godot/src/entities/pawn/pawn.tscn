@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bmh8e778cm4wa"]
+[gd_scene load_steps=12 format=3 uid="uid://bmh8e778cm4wa"]
 
 [ext_resource type="Script" path="res://src/entities/pawn/pawn.gd" id="1_1ileu"]
 [ext_resource type="Texture2D" uid="uid://ca6t5rlmqvr6a" path="res://assets/kenney-medieval-rts/PNG/Default size/Unit/medievalUnit_06.png" id="1_aphg3"]
@@ -10,7 +10,6 @@
 [ext_resource type="Script" path="res://src/entities/pawn/states/pawn_move_state.gd" id="6_fs0un"]
 [ext_resource type="Script" path="res://src/entities/pawn/actions/wait.gd" id="6_l2x3u"]
 [ext_resource type="Script" path="res://src/entities/pawn/goals/relax.gd" id="7_2jg5b"]
-[ext_resource type="Script" path="res://src/entities/pawn/actions/observe.gd" id="7_l5yjy"]
 [ext_resource type="Script" path="res://src/entities/pawn/goals/keep_storage_filled.gd" id="8_iltw4"]
 
 [node name="Pawn" type="CharacterBody2D" node_paths=PackedStringArray("state_manager", "goap_agent")]
@@ -23,7 +22,7 @@ texture = ExtResource("1_aphg3")
 
 [node name="GoapAgent" type="Node" parent="." node_paths=PackedStringArray("actions", "goals")]
 script = ExtResource("2_0hrp4")
-actions = [NodePath("Actions/InteractWithStorage"), NodePath("Actions/InteractWithTree"), NodePath("Actions/MoveTo"), NodePath("Actions/Wait"), NodePath("Actions/FindTrees")]
+actions = [NodePath("Actions/InteractWithStorage"), NodePath("Actions/InteractWithTree"), NodePath("Actions/MoveTo"), NodePath("Actions/Wait")]
 goals = [NodePath("Goals/Relax"), NodePath("Goals/KeepStorageFilled")]
 
 [node name="Actions" type="Node" parent="GoapAgent"]
@@ -62,11 +61,6 @@ script = ExtResource("6_l2x3u")
 preconditions = {
 "storage_empty": false
 }
-
-[node name="FindTrees" type="Node" parent="GoapAgent/Actions"]
-script = ExtResource("7_l5yjy")
-target_group = "tree"
-cost = 0
 
 [node name="Goals" type="Node" parent="GoapAgent"]
 
