@@ -34,5 +34,5 @@ func perform(actor, delta) -> bool:
 			return false
 		else:
 			if actor.current_state != "Move":
-				actor.set_move_target(_closest_entity.global_position)
+				actor.set_target_to_entity(_closest_entity.global_position)
 	return false

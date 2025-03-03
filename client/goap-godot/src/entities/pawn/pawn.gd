@@ -97,18 +97,24 @@ func tween_to_target(_speed = 0.3) -> void:
 
 func calculate_path(target_pos: Vector2) -> Array:
 	var updated_target_id = world_node.find_closest_available_position(world_node.to_grid_id(target_pos), 2)
-	target_position = world_node.get_point_position(updated_target_id)
 	var start_id = world_node.to_grid_id(global_position)
-	var end_id = updated_target_id
+	var end_id = world_node.to_grid_id(target_pos)
 	var calculated_path = []
+	target_position = target_pos
 	if world_node.grid.is_in_boundsv(start_id) and world_node.grid.is_in_boundsv(end_id):
 		calculated_path = world_node.grid.get_id_path(start_id, end_id)
 	return calculated_path
 
 
 func set_move_target(_new_target) -> void:
-	var _target_position = null
-	_target_position = _new_target
 	path = calculate_path(_new_target)
+	if path:
+		change_state("Move")
+
+
+func set_target_to_entity(_new_target) -> void:
+	var updated_target_id = world_node.find_closest_available_position(world_node.to_grid_id(_new_target), 2)
+	updated_target_id = world_node.get_point_position(updated_target_id)
+	path = calculate_path(updated_target_id)
 	if path:
 		change_state("Move")
