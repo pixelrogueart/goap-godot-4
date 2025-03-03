@@ -3,6 +3,7 @@ extends CharacterBody2D
 
 @onready var debug_state_label = %DebugStateLabel
 @onready var debug_goap_label = %DebugGoapAction
+@onready var debug_goal_goap_label = %DebugGoalGoapLabel
 
 @export var state_manager: StateManager
 @export var goap_agent: GoapAgent
@@ -52,6 +53,10 @@ func _unhandled_input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	if goap_agent._current_plan:
 		debug_goap_label.text = goap_agent._current_plan[goap_agent._current_plan_step].name
+	else:
+		debug_goap_label.text = ""
+	if goap_agent._current_goal:
+		debug_goal_goap_label.text = goap_agent._current_goal.name
 	state_manager.process(delta)
 
 
