@@ -50,6 +50,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	if goap_agent._current_plan:
+		debug_goap_label.text = goap_agent._current_plan[goap_agent._current_plan_step].name
 	state_manager.process(delta)
 
 
