@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://bcql0eelelmi8"]
+
+[ext_resource type="Script" path="res://src/entities/tree/tree.gd" id="1_8h3xn"]
+[ext_resource type="Texture2D" uid="uid://cl3ur4bhbe24d" path="res://assets/kenney-medieval-rts/Tilesheet/RTS_medieval@2.png" id="2_veqcs"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qu7gi"]
+atlas = ExtResource("2_veqcs")
+region = Rect2(1649, 718, 29, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jw6ei"]
+atlas = ExtResource("2_veqcs")
+region = Rect2(1069, 659, 39, 89)
+
+[node name="Tree" type="Node2D"]
+script = ExtResource("1_8h3xn")
+
+[node name="ChoppedSprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, 33)
+texture = SubResource("AtlasTexture_qu7gi")
+
+[node name="GrownSprite2D" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_jw6ei")

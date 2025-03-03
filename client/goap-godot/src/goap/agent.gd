@@ -2,7 +2,7 @@ class_name GoapAgent
 extends Node
 
 
-var _goals
+var _goals = []
 var _current_goal
 var _current_plan
 var _current_plan_step = 0
@@ -18,17 +18,17 @@ var _action_planner: GoapActionPlanner
 func _process(delta):
 	var goal = _get_best_goal()
 	if _current_goal == null or goal != _current_goal:
+		if _actor:
+			var blackboard = {
+				"position": _actor.position,
+				}
 
-		var blackboard = {
-			"position": _actor.position,
-			}
+			for s in _world_state._state:
+				blackboard[s] = _world_state._state[s]
 
-		for s in _world_state._state:
-			blackboard[s] = _world_state._state[s]
-
-		_current_goal = goal
-		_current_plan = _action_planner.get_plan(_current_goal, blackboard)
-		_current_plan_step = 0
+			_current_goal = goal
+			_current_plan = _action_planner.get_plan(_current_goal, blackboard)
+			_current_plan_step = 0
 	else:
 		_follow_plan(_current_plan, delta)
 

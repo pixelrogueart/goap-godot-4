@@ -1,0 +1,2 @@
+extends GoapAction
+class_name MoveToAction

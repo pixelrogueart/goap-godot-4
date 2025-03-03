@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cv5bqe8bxonbj"]
+
+[ext_resource type="Script" path="res://src/entities/house/house.gd" id="1_v4esp"]
+[ext_resource type="Texture2D" uid="uid://fa72turn136r" path="res://assets/kenney-medieval-rts/PNG/Default size/Structure/medievalStructure_17.png" id="2_dd7dr"]
+
+[node name="House" type="Node2D"]
+script = ExtResource("1_v4esp")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_dd7dr")

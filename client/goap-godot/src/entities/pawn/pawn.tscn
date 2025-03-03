@@ -1,0 +1,72 @@
+[gd_scene load_steps=7 format=3 uid="uid://bmh8e778cm4wa"]
+
+[ext_resource type="Script" path="res://src/entities/pawn/pawn.gd" id="1_1ileu"]
+[ext_resource type="Texture2D" uid="uid://ca6t5rlmqvr6a" path="res://assets/kenney-medieval-rts/PNG/Default size/Unit/medievalUnit_06.png" id="1_aphg3"]
+[ext_resource type="Script" path="res://src/goap/agent.gd" id="2_0hrp4"]
+[ext_resource type="Script" path="res://src/state-machine/StateManager.gd" id="4_iqnt5"]
+[ext_resource type="Script" path="res://src/entities/pawn/states/pawn_idle_state.gd" id="5_8kx63"]
+[ext_resource type="Script" path="res://src/entities/pawn/states/pawn_move_state.gd" id="6_fs0un"]
+
+[node name="Pawn" type="CharacterBody2D" node_paths=PackedStringArray("state_manager")]
+script = ExtResource("1_1ileu")
+state_manager = NodePath("StateManager")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_aphg3")
+
+[node name="GoapAgent" type="Node" parent="."]
+script = ExtResource("2_0hrp4")
+
+[node name="StateManager" type="Node" parent="."]
+script = ExtResource("4_iqnt5")
+starting_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateManager"]
+script = ExtResource("5_8kx63")
+
+[node name="Move" type="Node" parent="StateManager"]
+script = ExtResource("6_fs0un")
+
+[node name="Debug" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -56.0
+offset_right = 20.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Debug"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -50.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 0
+alignment = 2
+
+[node name="DebugStateLabel" type="Label" parent="Debug/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Idle
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DebugGoapAction" type="Label" parent="Debug/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Relax"
+horizontal_alignment = 1
+vertical_alignment = 1
