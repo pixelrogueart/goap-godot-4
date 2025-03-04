@@ -64,9 +64,6 @@ script = ExtResource("5_x6gcv")
 effects = {
 "arrived_at_location": true
 }
-preconditions = {
-"arrived_at_location": false
-}
 
 [node name="Wait" type="Node" parent="GoapAgent/Actions"]
 script = ExtResource("6_l2x3u")
@@ -78,14 +75,14 @@ preconditions = {
 
 [node name="FillStorage" type="Node" parent="GoapAgent/Goals"]
 script = ExtResource("8_iltw4")
-priority = 2
+priority = 1
 desired_state = {
 "storage_empty": false
 }
 
 [node name="ArriveAtLocation" type="Node" parent="GoapAgent/Goals"]
 script = ExtResource("9_mc2pw")
-priority = 1
+priority = 2
 desired_state = {
 "arrived_at_location": true
 }

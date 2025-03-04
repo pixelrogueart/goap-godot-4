@@ -62,7 +62,6 @@ func _get_best_goal():
 	for goal in _goals:
 		if goal.is_valid() and (highest_priority == null or goal.get_priority() > highest_priority.get_priority()):
 			highest_priority = goal
-
 		#print("Is %s valid? %s "%[goal.get_action_name(), goal.is_valid()])
 	return highest_priority
 

@@ -49,6 +49,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			goap_agent._world_state.set_state("arrived_at_location", false)
 			goap_agent._world_state.set_state("arrive_location", get_global_mouse_position())
+			print(goap_agent._world_state._state)
 
 
 func _process(delta: float) -> void:

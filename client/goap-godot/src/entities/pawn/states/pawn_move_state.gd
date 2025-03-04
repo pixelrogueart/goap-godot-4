@@ -11,6 +11,9 @@ func enter() -> void:
 
 func physics_process(_delta: float) -> void:
 	super.physics_process(_delta)
+	if !_pawn.step_position:
+		_pawn.stop_moving()
+		printerr("Step position not found.")
 	var direction = (_pawn.step_position - _pawn.global_position).normalized()
 	_pawn.velocity = direction * move_speed
 	if _pawn.world_node.is_at_grid_position(_pawn, _pawn.step_position) and _pawn.global_position.distance_to(_pawn.step_position) <= _pawn.reach_distance:

@@ -3,7 +3,7 @@ extends Node
 
 
 var _actions: Array
-var _log
+var _log = ""
 
 func set_actions(actions: Array):
 	_actions = actions
@@ -11,6 +11,7 @@ func set_actions(actions: Array):
 
 func console_message(text) -> void:
 	print(text)
+	_log += " %s"%text
 
 func get_plan(goal: GoapGoal, blackboard = {}) -> Array:
 	console_message("Goal: %s" % goal.get_action_name())
