@@ -2,7 +2,7 @@ class_name HouseEntity
 extends Entity
 
 var available = true
-var sleeping_entity: Entity
+var sleeping_entity: PawnEntity
 
 
 func sleep(entity:Entity):
@@ -19,7 +19,9 @@ func is_available():
 func _process(delta: float) -> void:
 	if sleeping_entity:
 		if !world_node.is_at_grid_position(sleeping_entity,self.global_position):
-			pass
+			sleeping_entity.world_state.set_state("sleeping", false)
+			available = true
+			sleeping_entity = null
 	else:
 		set_process(false)
 

@@ -11,6 +11,6 @@ func _process(delta: float) -> void:
 		if !world_node:
 			return
 		if is_solid:
-			world_node.grid.set_point_solid(world_node.to_grid_coords(_last_position),false)
 			world_node.grid.set_point_solid(world_node.to_grid_coords(global_position),true)
+		world_node.grid.set_point_solid(world_node.to_grid_coords(_last_position),false)
 		_last_position = global_position

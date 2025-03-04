@@ -40,7 +40,12 @@ func call_validation_method(_entity):
 func perform(actor, delta) -> bool:
 	var _closest_entity = _actor.find_closest_entity(target_group)
 	if _closest_entity and call_validation_method(_closest_entity):
-		if actor.world_node.is_next_to_grid_position(actor, _closest_entity.global_position):
+		var arrived = false
+		if _closest_entity.is_solid:
+			arrived = actor.world_node.is_next_to_grid_position(actor,_closest_entity.global_position)
+		else:
+			arrived = actor.world_node.is_at_grid_position(actor, _closest_entity.global_position)
+		if arrived:
 			_actor.stop_moving()
 			if cooldown_timer.is_stopped():
 				if _closest_entity.call(method_interaction, actor):

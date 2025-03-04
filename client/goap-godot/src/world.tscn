@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=4 uid="uid://ddx4obdacpv5x"]
+[gd_scene load_steps=8 format=4 uid="uid://ddx4obdacpv5x"]
 
 [ext_resource type="PackedScene" uid="uid://bmh8e778cm4wa" path="res://src/entities/pawn/pawn.tscn" id="1_33gke"]
 [ext_resource type="Script" path="res://src/world_manager.gd" id="1_m4fjl"]
+[ext_resource type="Script" path="res://src/world_debug_grid.gd" id="2_evep3"]
 [ext_resource type="Texture2D" uid="uid://cqs31x4d5kmws" path="res://assets/kenney-medieval-rts/Tilesheet/medieval_tilesheet.png" id="2_xc2a2"]
 [ext_resource type="Script" path="res://src/debug.gd" id="4_bekgu"]
 
@@ -149,6 +150,9 @@ y_sort_enabled = true
 script = ExtResource("1_m4fjl")
 draw_grid = true
 
+[node name="WorldDebugGrud" type="Node2D" parent="."]
+script = ExtResource("2_evep3")
+
 [node name="TileMap" type="TileMap" parent="."]
 show_behind_parent = true
 tile_set = SubResource("TileSet_fy1x8")
@@ -167,7 +171,6 @@ z_index = -1
 y_sort_enabled = true
 
 [node name="Pawn" parent="EntitiesLayer" instance=ExtResource("1_33gke")]
-reach_distance = 5
 
 [node name="Camera2D" type="Camera2D" parent="EntitiesLayer/Pawn"]
 position_smoothing_enabled = true
