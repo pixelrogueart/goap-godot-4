@@ -20,11 +20,15 @@ var current_state: String
 
 var hauled_item: ItemEntity
 
+
+
 func _ready():
 	state_manager.init(self)
 	goap_agent.init(self)
 	world_state.set_state("has_item", false)
 	world_state.set_state("has_available_space", true)
+	world_state.set_state("tired", false)
+	world_state.set_state("energy", 0)
 
 
 func change_state(new_state: String):
@@ -48,7 +52,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			goap_agent._world_state.set_state("arrived_at_location", false)
 			goap_agent._world_state.set_state("arrive_location", get_global_mouse_position())
-			print(goap_agent._world_state._state)
 
 
 func _process(delta: float) -> void:
@@ -62,6 +65,8 @@ func _process(delta: float) -> void:
 	state_manager.process(delta)
 	hold_item()
 	DebugManager.debug_node.update_world_log(goap_agent._world_state._state)
+	if world_state.get_state("energy") == 0:
+		world_state.set_state("tired", true)
 
 func hold_item():
 	if hauled_item:
@@ -83,7 +88,7 @@ func find_closest_entity(group_name):
 
 	for element in elements:
 		var distance = self.global_position.distance_to(element.global_position)
-		if  distance < closest_distance:
+		if  distance < closest_distance and element.is_available():
 			closest_distance = distance
 			closest_element = element
 
@@ -129,7 +134,7 @@ func set_move_target(_new_target) -> void:
 
 
 func set_target_to_entity(_new_target) -> void:
-	var updated_target = world_node.get_point_position(world_node.find_closest_available_position(world_node.to_grid_id(_new_target),1))
+	var updated_target = world_node.get_point_position(world_node.find_closest_available_position(world_node.to_grid_id(self.global_position), world_node.to_grid_id(_new_target),1))
 	path = calculate_path(updated_target)
 	if path:
 		change_state("Move")

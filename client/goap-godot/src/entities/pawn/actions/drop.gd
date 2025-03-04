@@ -29,12 +29,18 @@ func perform(actor, delta) -> bool:
 	if _closest_entity:
 		if actor.world_node.is_next_to_grid_position(actor,_closest_entity.global_position):
 			_actor.stop_moving()
-			if _closest_entity.store_item(actor, item_id):
-				var item:ItemEntity = _actor.hauled_item
-				_actor.hauled_item.drop(_actor)
-				item.tween_to_position(_closest_entity.global_position, 0.3)
-				set_effects()
-				return true
+			if _actor.hauled_item:
+				if _closest_entity.has_space(actor):
+					var item:ItemEntity = _actor.hauled_item
+					_actor.hauled_item.drop(_actor)
+					_closest_entity.store_item(actor, item)
+					item.tween_to_position(_closest_entity.global_position, 0.3)
+					_world_state.set_state("has_item", false)
+					#set_effects()
+					return true
+				else:
+					_world_state.set_state("storage_filled", true)
+					return true
 			return false
 		else:
 			if actor.current_state != "Move":

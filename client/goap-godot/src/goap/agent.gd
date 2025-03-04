@@ -4,7 +4,7 @@ extends Node
 
 var _goals = []
 var _current_goal
-var _current_plan
+var _current_plan = []
 var _current_plan_step = 0
 
 var _actor
@@ -15,10 +15,14 @@ var _action_planner: GoapActionPlanner
 @export var goals_node: Node
 
 var last_blackboard = {}
-
+var _finished_last_plan = false
 
 func _process(delta):
 	var goal = _get_best_goal()
+	#print("Current Goal: %s Current Plan Size: %s, Current Plan Step: %s"%[_current_goal, _current_plan.size(),_current_plan_step + 1])
+	if _finished_last_plan:
+		_current_goal = null
+		_finished_last_plan = false
 	if _current_goal == null or goal != _current_goal:
 		if _actor:
 			var blackboard = {
@@ -62,7 +66,7 @@ func _get_best_goal():
 	var highest_priority
 	var text = ""
 	for goal in _goals:
-		if goal.is_valid() and (highest_priority == null or goal.get_priority() > highest_priority.get_priority()):
+		if goal.enabled and goal.is_valid() and (highest_priority == null or goal.get_priority() > highest_priority.get_priority()):
 			highest_priority = goal
 		text += "\n Is %s valid? %s "%[goal.get_action_name(), goal.is_valid()]
 	DebugManager.debug_node.update_goal_log(text)
@@ -77,3 +81,5 @@ func _follow_plan(plan, delta):
 	var is_step_complete = plan[_current_plan_step].perform(_actor, delta)
 	if is_step_complete and _current_plan_step < plan.size() - 1:
 		_current_plan_step += 1
+	elif is_step_complete and _current_plan_step == plan.size() - 1:
+		_finished_last_plan = true

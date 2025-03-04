@@ -1,7 +1,7 @@
 class_name HouseEntity
 extends Entity
 
-var available = true
+
 var sleeping_entity: PawnEntity
 
 
@@ -12,7 +12,7 @@ func sleep(entity: Entity):
 	return true
 
 
-func is_available(entity: Entity):
+func is_available():
 	return available
 
 

@@ -19,24 +19,23 @@ func _ready() -> void:
 
 func is_valid() -> bool:
 	var target_group_entities = _actor.find_entities(target_group)
-	if _actor.find_entities(target_group).size() < 0:
+	if _actor.find_entities(target_group).size() <= 0:
 		return false
-	if validation_method:
-		return call_validation_method(target_group_entities[0])
 	return true
 
 
 func get_cost(blackboard) -> int:
 	if blackboard.has("global_position"):
 		var closest_entity = _actor.find_closest_entity(target_group)
-		return int(closest_entity.global_position.distance_to(blackboard.global_position) / 7)
+		if closest_entity:
+			return int(closest_entity.global_position.distance_to(blackboard.global_position) / 7)
 	return cost
 
 
 func call_validation_method(_entity):
 	if !validation_method:
 		return true
-	return _entity.call(validation_method, _actor)
+	return _entity.call(validation_method)
 
 
 func perform(actor, delta) -> bool:

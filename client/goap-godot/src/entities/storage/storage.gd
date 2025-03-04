@@ -4,11 +4,12 @@ extends Entity
 
 var item_amount = 0
 var storage_space = 3
+var item: ItemEntity
 
-
-func store_item(entity: Entity, item_id):
+func store_item(entity: Entity, _item):
 	item_amount += 1
-	entity.world_state.set_state("holding_item", false)
+	item = _item
+	item.available = false
 	return storage_space <= item_amount
 
 

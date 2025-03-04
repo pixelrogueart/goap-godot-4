@@ -39,6 +39,9 @@ method_interaction = "chop"
 effects = {
 "has_available_item": true
 }
+preconditions = {
+"has_available_tree": true
+}
 
 [node name="Grab" type="Node" parent="GoapAgent/Actions"]
 script = ExtResource("5_mayto")
@@ -61,6 +64,7 @@ item_id = "wood"
 method_interaction = "drop"
 validation_method = "has_space"
 effects = {
+"has_item": false,
 "storage_filled": true
 }
 preconditions = {
@@ -74,7 +78,7 @@ target_group = "house"
 method_interaction = "sleep"
 validation_method = "is_available"
 effects = {
-"sleeping": true
+"tired": false
 }
 
 [node name="MoveTo" type="Node" parent="GoapAgent/Actions"]
@@ -97,6 +101,7 @@ priority = 1
 desired_state = {
 "storage_filled": true
 }
+enabled = false
 
 [node name="ArriveAtLocation" type="Node" parent="GoapAgent/Goals"]
 script = ExtResource("9_mc2pw")
@@ -108,7 +113,7 @@ desired_state = {
 [node name="SleepAtBed" type="Node" parent="GoapAgent/Goals"]
 script = ExtResource("10_63wsx")
 desired_state = {
-"sleeping": true
+"tired": false
 }
 
 [node name="Relax" type="Node" parent="GoapAgent/Goals"]

@@ -6,6 +6,7 @@ var _world_state: GoapWorldState
 @export var default_valid_state: bool = true
 @export var priority: int
 @export var desired_state: Dictionary
+@export var enabled: bool = true
 
 
 func get_action_name(): return self.name

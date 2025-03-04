@@ -110,5 +110,5 @@ func _print_plan(plan):
 	var actions = []
 	for a in plan.actions:
 		actions.push_back(a.get_action_name())
-	print({"cost": plan.cost, "actions": actions})
+	#print({"cost": plan.cost, "actions": actions})
 	console_message({"cost": plan.cost, "actions": actions})

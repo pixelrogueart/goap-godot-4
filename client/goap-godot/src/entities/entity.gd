@@ -3,9 +3,9 @@ extends CharacterBody2D
 
 @export var is_solid: bool = true
 
+var available = true
 var world_node: WorldManager
 var _last_position: Vector2
-
 
 func _process(delta: float) -> void:
 	if _last_position != global_position:
@@ -31,3 +31,6 @@ func tween_to_position(_position, _speed = 0.3) -> void:
 		return
 	var tween: Tween = create_tween()
 	tween.tween_property(self, "global_position", _position, _speed)
+
+func is_available() -> bool:
+	return available

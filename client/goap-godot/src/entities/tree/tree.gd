@@ -8,6 +8,7 @@ var health: int = 3
 func _ready() -> void:
 	$ChoppedSprite2D.hide()
 
+
 func update_state() -> void:
 	if health > 0:
 		$ChoppedSprite2D.hide()
@@ -16,6 +17,7 @@ func update_state() -> void:
 		$ChoppedSprite2D.show()
 		$GrownSprite2D.hide()
 
+
 func chop(entity: Entity):
 	health -= 1 
 	update_state()
@@ -23,6 +25,16 @@ func chop(entity: Entity):
 	if health <= 0:
 		var log = log_scene.instantiate()
 		world_node.entities_layer.add_child(log)
-		log.global_position = world_node.get_point_position(world_node.find_closest_available_position(world_node.to_grid_id(self.global_position),1))
+		log.global_position = self.global_position
 		log.world_node = world_node
+		log.item_id = "wood"
 	return health <= 0
+
+
+func is_available() -> bool:
+	return health > 0
+
+
+func _process(delta: float) -> void:
+	if self.health > 0:
+		world_node.world_state.set_state("has_available_tree", true)
