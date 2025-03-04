@@ -5,14 +5,14 @@ var available = true
 var sleeping_entity: PawnEntity
 
 
-func sleep(entity:Entity):
+func sleep(entity: Entity):
 	sleeping_entity = entity
 	available = false
 	set_process(true)
 	return true
 
 
-func is_available():
+func is_available(entity: Entity):
 	return available
 
 

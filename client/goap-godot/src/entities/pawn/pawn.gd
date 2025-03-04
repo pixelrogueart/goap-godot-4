@@ -18,14 +18,13 @@ var target_position = null
 
 var current_state: String
 
-var wood: int = 0
-
+var hauled_item: ItemEntity
 
 func _ready():
 	state_manager.init(self)
 	goap_agent.init(self)
-	goap_agent._world_state.set_state("storage_empty", true)
-	goap_agent._world_state.set_state("has_wood", false)
+	world_state.set_state("has_item", false)
+	world_state.set_state("has_available_space", true)
 
 
 func change_state(new_state: String):
@@ -62,6 +61,8 @@ func _process(delta: float) -> void:
 		debug_goal_goap_label.text = goap_agent._current_goal.name
 	state_manager.process(delta)
 	DebugManager.debug_node.update_world_log(goap_agent._world_state._state)
+	if hauled_item:
+		hauled_item.global_position = self.global_position
 
 
 func _physics_process(delta: float) -> void:
@@ -135,15 +136,3 @@ func set_target_to_entity(_new_target) -> void:
 	path = calculate_path(updated_target)
 	if path:
 		change_state("Move")
-
-
-func has_wood() -> bool:
-	return wood > 0
-
-
-func add_wood():
-	wood += 1
-
-
-func remove_wood():
-	wood -= 1

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bmh8e778cm4wa"]
+[gd_scene load_steps=15 format=3 uid="uid://bmh8e778cm4wa"]
 
 [ext_resource type="Script" path="res://src/entities/pawn/pawn.gd" id="1_1ileu"]
 [ext_resource type="Texture2D" uid="uid://ca6t5rlmqvr6a" path="res://assets/kenney-medieval-rts/PNG/Default size/Unit/medievalUnit_06.png" id="1_aphg3"]
@@ -6,11 +6,9 @@
 [ext_resource type="Script" path="res://src/state-machine/StateManager.gd" id="4_iqnt5"]
 [ext_resource type="Script" path="res://src/entities/pawn/actions/interact.gd" id="4_nod00"]
 [ext_resource type="Script" path="res://src/entities/pawn/states/pawn_idle_state.gd" id="5_8kx63"]
-[ext_resource type="Script" path="res://src/entities/pawn/actions/grab.gd" id="5_mayto"]
 [ext_resource type="Script" path="res://src/entities/pawn/actions/move_to.gd" id="5_x6gcv"]
 [ext_resource type="Script" path="res://src/entities/pawn/states/pawn_move_state.gd" id="6_fs0un"]
 [ext_resource type="Script" path="res://src/entities/pawn/actions/wait.gd" id="6_l2x3u"]
-[ext_resource type="Script" path="res://src/entities/pawn/actions/drop.gd" id="6_u7h61"]
 [ext_resource type="Script" path="res://src/entities/pawn/goals/relax.gd" id="7_2jg5b"]
 [ext_resource type="Script" path="res://src/entities/pawn/goals/keep_storage_filled.gd" id="8_iltw4"]
 [ext_resource type="Script" path="res://src/entities/pawn/goals/arrive_at_location.gd" id="9_mc2pw"]
@@ -32,50 +30,45 @@ goals_node = NodePath("Goals")
 
 [node name="Actions" type="Node" parent="GoapAgent"]
 
-[node name="ChopTree" type="Node" parent="GoapAgent/Actions"]
+[node name="ChopWood" type="Node" parent="GoapAgent/Actions"]
 script = ExtResource("4_nod00")
 target_group = "tree"
 method_interaction = "chop"
+validation_method = null
+interaction_cooldown = null
 effects = {
-"has_available_item": true
+"has_wood": true
 }
+preconditions = null
+cost = null
 
-[node name="Grab" type="Node" parent="GoapAgent/Actions"]
-script = ExtResource("5_mayto")
-target_group = "item"
-item_id = "wood"
-method_interaction = "grab"
-validation_method = "is_available"
-effects = {
-"has_item": true
-}
-preconditions = {
-"has_available_item": true,
-"has_item": false
-}
-
-[node name="Drop" type="Node" parent="GoapAgent/Actions"]
-script = ExtResource("6_u7h61")
+[node name="StoreWood" type="Node" parent="GoapAgent/Actions"]
+script = ExtResource("4_nod00")
 target_group = "storage"
-item_id = "wood"
-method_interaction = "store_item"
-validation_method = "has_space"
+method_interaction = "insert_wood"
+validation_method = "can_store"
+interaction_cooldown = null
 effects = {
-"storage_filled": true
+"has_wood": false,
+"storage_empty": false
 }
 preconditions = {
-"has_available_space": true,
-"has_item": true
+"has_wood": true,
+"storage_empty": true
 }
+cost = null
 
 [node name="Sleep" type="Node" parent="GoapAgent/Actions"]
 script = ExtResource("4_nod00")
 target_group = "house"
 method_interaction = "sleep"
 validation_method = "is_available"
+interaction_cooldown = null
 effects = {
 "sleeping": true
 }
+preconditions = null
+cost = null
 
 [node name="MoveTo" type="Node" parent="GoapAgent/Actions"]
 script = ExtResource("5_x6gcv")
@@ -91,11 +84,11 @@ preconditions = {
 
 [node name="Goals" type="Node" parent="GoapAgent"]
 
-[node name="FillWoodStorage" type="Node" parent="GoapAgent/Goals"]
+[node name="FillStorage" type="Node" parent="GoapAgent/Goals"]
 script = ExtResource("8_iltw4")
 priority = 1
 desired_state = {
-"storage_filled": true
+"storage_empty": false
 }
 
 [node name="ArriveAtLocation" type="Node" parent="GoapAgent/Goals"]

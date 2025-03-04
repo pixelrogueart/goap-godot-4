@@ -11,9 +11,11 @@ class_name InteractAction
 
 var cooldown_timer: Timer = Timer.new()
 
+
 func _ready() -> void:
 	add_child(cooldown_timer)
 	cooldown_timer.one_shot = true
+
 
 func is_valid() -> bool:
 	var target_group_entities = _actor.find_entities(target_group)
@@ -34,7 +36,7 @@ func get_cost(blackboard) -> int:
 func call_validation_method(_entity):
 	if !validation_method:
 		return true
-	return _entity.call(validation_method)
+	return _entity.call(validation_method, _actor)
 
 
 func perform(actor, delta) -> bool:

@@ -6,12 +6,7 @@ func is_valid() -> bool:
 	var entities = _actor.find_entities("storage")
 	if entities.is_empty():
 		return false
-	return entities[0].wood_amount < entities[0].storage_space
-
-
-func get_priority() -> int:
-	return priority
-
-
-func get_desired_state() -> Dictionary:
-	return desired_state
+	for i in entities:
+		if i.has_space(_actor):
+			return true
+	return false

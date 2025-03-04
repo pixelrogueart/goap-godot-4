@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://bhykchtt02v0"]
+
+[ext_resource type="Script" path="res://src/entities/item/item.gd" id="1_wu27h"]
+[ext_resource type="Texture2D" uid="uid://bw07h7fmxmbb6" path="res://assets/kenney-medieval-rts/PNG/Default size/Environment/medievalEnvironment_06.png" id="2_u6qk3"]
+
+[node name="Item" type="CharacterBody2D" groups=["item"]]
+script = ExtResource("1_wu27h")
+item_id = "wood"
+is_solid = false
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_u6qk3")
