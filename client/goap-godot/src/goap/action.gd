@@ -27,11 +27,16 @@ func get_cost(_blackboard) -> int:
 
 
 func get_preconditions() -> Dictionary:
-	return {}
+	return preconditions
 
 
 func get_effects() -> Dictionary:
-	return {}
+	return effects
+
+
+func set_effects() -> void:
+	for effect in effects.keys():
+		_world_state.set_state(effect, effects[effect])
 
 
 func perform(_actor, _delta) -> bool:

@@ -3,8 +3,10 @@ extends Node
 
 var _actor
 var _world_state: GoapWorldState
+@export var default_valid_state: bool = true
 @export var priority: int
 @export var desired_state: Dictionary
+
 
 func get_action_name(): return self.name
 
@@ -15,7 +17,7 @@ func init(actor, world_state) -> void:
 
 
 func is_valid() -> bool:
-	return true
+	return default_valid_state
 
 
 func get_priority() -> int:

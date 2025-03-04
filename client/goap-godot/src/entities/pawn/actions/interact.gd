@@ -26,14 +26,6 @@ func get_cost(blackboard) -> int:
 	return cost
 
 
-func get_preconditions() -> Dictionary:
-	return preconditions
-
-
-func get_effects() -> Dictionary:
-	return effects
-
-
 func call_validation_method(_entity):
 	if !validation_method:
 		return true
@@ -47,8 +39,7 @@ func perform(actor, delta) -> bool:
 			_actor.stop_moving()
 			if cooldown_timer.is_stopped():
 				if _closest_entity.call(method_interaction):
-					for effect in effects.keys():
-						_world_state.set_state(effect, effects[effect])
+					set_effects()
 					return true
 				cooldown_timer.start(interaction_cooldown)
 			return false
