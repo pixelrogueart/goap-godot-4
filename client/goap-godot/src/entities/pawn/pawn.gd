@@ -47,7 +47,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	state_manager.input(event)
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			set_move_target(get_global_mouse_position())
+			goap_agent._world_state.set_state("arrived_at_location", false)
+			goap_agent._world_state.set_state("arrive_location", get_global_mouse_position())
 
 
 func _process(delta: float) -> void:
@@ -109,7 +110,7 @@ func stop_moving() -> void:
 	change_state("Idle")
 
 func calculate_path(target_pos: Vector2) -> Array:
-	var updated_target_id = world_node.find_closest_available_position(world_node.to_grid_id(target_pos), 2)
+	var updated_target_id = world_node.find_closest_available_position(world_node.to_grid_id(target_pos), 1)
 	var start_id = world_node.to_grid_id(global_position)
 	var end_id = world_node.to_grid_id(target_pos)
 	var calculated_path = []

@@ -2,7 +2,7 @@ class_name GoapActionPlanner
 extends Node
 
 
-var _actions: Array[GoapAction]
+var _actions: Array
 var _log
 
 func set_actions(actions: Array):
@@ -95,6 +95,8 @@ func _transform_tree_into_array(p, blackboard):
 	var plans = []
 
 	if p.children.size() == 0:
+		print(p)
+		print(p.action)
 		plans.push_back({ "actions": [p.action], "cost": p.action.get_cost(blackboard) })
 		return plans
 

@@ -11,8 +11,8 @@ var _actor
 var _world_state
 
 var _action_planner: GoapActionPlanner
-@export var actions: Array[GoapAction]
-@export var goals: Array[GoapGoal]
+@export var actions_node: Node 
+@export var goals_node: Node
 
 var last_blackboard = {}
 
@@ -38,12 +38,22 @@ func _process(delta):
 func init(actor):
 	_world_state = GoapWorldState.new()
 	_actor = actor
-	_goals = goals
+	var _actions = []
+	for child in goals_node.get_children():
+		if not child is GoapGoal:
+			continue
+		_goals.push_back(child)
+	for child in actions_node.get_children():
+		if not child is GoapAction:
+			continue
+		_actions.push_back(child)
 	_action_planner = GoapActionPlanner.new()
-	_action_planner.set_actions(actions)
+	_action_planner.set_actions(_actions)
+	
 	for goal in _goals:
 		goal.init(_actor, _world_state)
-	for action in actions:
+
+	for action in _actions:
 		action.init(_actor, _world_state)
 
 

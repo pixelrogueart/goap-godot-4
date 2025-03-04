@@ -23,10 +23,10 @@ func perform(actor, delta) -> bool:
 		return false
 
 	if move_close:
-		if actor.world_node.is_next_to_grid_position(actor, closest_entity.global_position):
+		if actor.world_node.is_next_to_grid_position(actor, _world_state.get_state("arrive_location")):
 			return true
 	else:
-		if actor.world_node.is_at_grid_position(actor, closest_entity.global_position):
+		if actor.world_node.is_at_grid_position(actor, _world_state.get_state("arrive_location")):
 			return true
 
 	actor.set_move_target(closest_entity.global_position)

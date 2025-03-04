@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bmh8e778cm4wa"]
+[gd_scene load_steps=14 format=3 uid="uid://bmh8e778cm4wa"]
 
 [ext_resource type="Script" path="res://src/entities/pawn/pawn.gd" id="1_1ileu"]
 [ext_resource type="Texture2D" uid="uid://ca6t5rlmqvr6a" path="res://assets/kenney-medieval-rts/PNG/Default size/Unit/medievalUnit_06.png" id="1_aphg3"]
@@ -6,7 +6,6 @@
 [ext_resource type="Script" path="res://src/state-machine/StateManager.gd" id="4_iqnt5"]
 [ext_resource type="Script" path="res://src/entities/pawn/actions/interact.gd" id="4_nod00"]
 [ext_resource type="Script" path="res://src/entities/pawn/states/pawn_idle_state.gd" id="5_8kx63"]
-[ext_resource type="Script" path="res://src/goap/action.gd" id="5_8526f"]
 [ext_resource type="Script" path="res://src/entities/pawn/actions/move_to.gd" id="5_x6gcv"]
 [ext_resource type="Script" path="res://src/entities/pawn/states/pawn_move_state.gd" id="6_fs0un"]
 [ext_resource type="Script" path="res://src/entities/pawn/actions/wait.gd" id="6_l2x3u"]
@@ -23,10 +22,10 @@ goap_agent = NodePath("GoapAgent")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_aphg3")
 
-[node name="GoapAgent" type="Node" parent="." node_paths=PackedStringArray("actions", "goals")]
+[node name="GoapAgent" type="Node" parent="." node_paths=PackedStringArray("actions_node", "goals_node")]
 script = ExtResource("2_0hrp4")
-actions = [NodePath("Actions/StoreWood"), NodePath("Actions/ChopWood"), NodePath("Actions/MoveTo"), NodePath("Actions/Wait")]
-goals = [NodePath("Goals/Relax"), NodePath("Goals/FillStorage")]
+actions_node = NodePath("Actions")
+goals_node = NodePath("Goals")
 
 [node name="Actions" type="Node" parent="GoapAgent"]
 
@@ -53,10 +52,21 @@ preconditions = {
 }
 
 [node name="Sleep" type="Node" parent="GoapAgent/Actions"]
-script = ExtResource("5_8526f")
+script = ExtResource("4_nod00")
+target_group = "house"
+method_interaction = "sleep"
+effects = {
+"at_bed": true
+}
 
 [node name="MoveTo" type="Node" parent="GoapAgent/Actions"]
 script = ExtResource("5_x6gcv")
+effects = {
+"arrived_at_location": true
+}
+preconditions = {
+"arrived_at_location": false
+}
 
 [node name="Wait" type="Node" parent="GoapAgent/Actions"]
 script = ExtResource("6_l2x3u")
@@ -68,7 +78,7 @@ preconditions = {
 
 [node name="FillStorage" type="Node" parent="GoapAgent/Goals"]
 script = ExtResource("8_iltw4")
-priority = 1
+priority = 2
 desired_state = {
 "storage_empty": false
 }
@@ -77,11 +87,14 @@ desired_state = {
 script = ExtResource("9_mc2pw")
 priority = 1
 desired_state = {
-"storage_empty": false
+"arrived_at_location": true
 }
 
 [node name="SleepAtBed" type="Node" parent="GoapAgent/Goals"]
 script = ExtResource("10_63wsx")
+desired_state = {
+"at_bed": true
+}
 
 [node name="Relax" type="Node" parent="GoapAgent/Goals"]
 script = ExtResource("7_2jg5b")
