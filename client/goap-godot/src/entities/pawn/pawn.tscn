@@ -36,6 +36,7 @@ goals_node = NodePath("Goals")
 script = ExtResource("4_nod00")
 target_group = "tree"
 method_interaction = "chop"
+interaction_cost = 20
 effects = {
 "has_available_item": true
 }
@@ -101,7 +102,6 @@ priority = 1
 desired_state = {
 "storage_filled": true
 }
-enabled = false
 
 [node name="ArriveAtLocation" type="Node" parent="GoapAgent/Goals"]
 script = ExtResource("9_mc2pw")

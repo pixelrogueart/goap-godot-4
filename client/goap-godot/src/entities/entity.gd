@@ -32,5 +32,5 @@ func tween_to_position(_position, _speed = 0.3) -> void:
 	var tween: Tween = create_tween()
 	tween.tween_property(self, "global_position", _position, _speed)
 
-func is_available() -> bool:
+func is_available(entity: Entity) -> bool:
 	return available

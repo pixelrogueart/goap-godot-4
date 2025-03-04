@@ -8,11 +8,19 @@ var sleeping_entity: PawnEntity
 func sleep(entity: Entity):
 	sleeping_entity = entity
 	available = false
+	entity.world_state.set_state("energy", entity.world_state.get_state("energy") + 20 )
 	set_process(true)
-	return true
+	if entity.world_state.get_state("energy") >= 100:
+		sleeping_entity.world_state.set_state("sleeping", false)
+		sleeping_entity.world_state.set_state("energy", 100)
+		return true
+	sleeping_entity.world_state.set_state("sleeping", true)
+	return false
 
 
-func is_available():
+func is_available(entity: Entity):
+	if sleeping_entity == entity:
+		return true
 	return available
 
 

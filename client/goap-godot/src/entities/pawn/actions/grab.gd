@@ -28,7 +28,7 @@ func get_cost(blackboard) -> int:
 func call_validation_method(_entity):
 	if !validation_method:
 		return true
-	return _entity.call(validation_method)
+	return _entity.call(validation_method, _actor)
 
 
 func perform(actor, delta) -> bool:
@@ -42,7 +42,7 @@ func perform(actor, delta) -> bool:
 				_world_state.set_state("has_available_item", false)
 				for item in _entities:
 					if item.item_id == item_id:
-						if item.is_available():
+						if item.is_available(_actor):
 							_world_state.set_state("has_available_item", true)
 						break
 				return true

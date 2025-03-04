@@ -28,7 +28,7 @@ func _ready():
 	world_state.set_state("has_item", false)
 	world_state.set_state("has_available_space", true)
 	world_state.set_state("tired", false)
-	world_state.set_state("energy", 0)
+	world_state.set_state("energy", 100)
 
 
 func change_state(new_state: String):
@@ -65,8 +65,12 @@ func _process(delta: float) -> void:
 	state_manager.process(delta)
 	hold_item()
 	DebugManager.debug_node.update_world_log(goap_agent._world_state._state)
-	if world_state.get_state("energy") == 0:
+	if world_state.get_state("energy") <= 15:
+		if world_state.get_state("energy") < 0:
+			world_state.set_state("energy", 0)
 		world_state.set_state("tired", true)
+	else:
+		world_state.set_state("tired", false)
 
 func hold_item():
 	if hauled_item:
@@ -88,7 +92,7 @@ func find_closest_entity(group_name):
 
 	for element in elements:
 		var distance = self.global_position.distance_to(element.global_position)
-		if  distance < closest_distance and element.is_available():
+		if  distance < closest_distance and element.is_available(self):
 			closest_distance = distance
 			closest_element = element
 

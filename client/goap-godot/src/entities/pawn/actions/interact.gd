@@ -8,6 +8,7 @@ class_name InteractAction
 @export var validation_method: String
 
 @export var interaction_cooldown: float = 1.0
+@export var interaction_cost: int = 0
 
 var cooldown_timer: Timer = Timer.new()
 
@@ -35,7 +36,7 @@ func get_cost(blackboard) -> int:
 func call_validation_method(_entity):
 	if !validation_method:
 		return true
-	return _entity.call(validation_method)
+	return _entity.call(validation_method, _actor)
 
 
 func perform(actor, delta) -> bool:
@@ -51,7 +52,9 @@ func perform(actor, delta) -> bool:
 			if cooldown_timer.is_stopped():
 				if _closest_entity.call(method_interaction, actor):
 					set_effects()
+					_world_state.set_state("energy", _world_state.get_state("energy",100) - interaction_cost)
 					return true
+				_world_state.set_state("energy", _world_state.get_state("energy",100) - interaction_cost)
 				cooldown_timer.start(interaction_cooldown)
 			return false
 		else:

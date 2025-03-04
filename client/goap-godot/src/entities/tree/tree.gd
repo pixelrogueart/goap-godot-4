@@ -31,7 +31,7 @@ func chop(entity: Entity):
 	return health <= 0
 
 
-func is_available() -> bool:
+func is_available(entity: Entity) -> bool:
 	return health > 0
 
 
