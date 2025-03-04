@@ -11,6 +11,21 @@ region = Rect2(1649, 718, 29, 33)
 atlas = ExtResource("2_veqcs")
 region = Rect2(1069, 659, 39, 89)
 
+[sub_resource type="Animation" id="Animation_v7hg4"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("GrownSprite2D:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
 [sub_resource type="Animation" id="Animation_i8pi3"]
 resource_name = "chop"
 length = 0.3
@@ -25,21 +40,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(2.07053, 2.07053, 2.07053),
 "update": 0,
 "values": [0.0, 0.159181, 0.0]
-}
-
-[sub_resource type="Animation" id="Animation_v7hg4"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("GrownSprite2D:rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_6ei70"]

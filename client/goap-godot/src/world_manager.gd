@@ -56,12 +56,17 @@ func _draw() -> void:
 						draw_circle(point_pos, 2, color)
 
 
+func create_entity_at(entity: Entity, pos):
+	entities_layer.add_child(entity)
+	entity.global_position = pos
+	entity.world_node = self
+
+
 func _setup_entities():
 	for entity: Node2D in entities_layer.get_children():
 		entity.global_position = snap_to_grid(entity.global_position)
 		if entity is Entity:
 			entity.world_node = self
-		if entity is Entity:
 			if entity.is_solid:
 				grid.set_point_solid(to_grid_coords(entity.global_position),true)
 			else:

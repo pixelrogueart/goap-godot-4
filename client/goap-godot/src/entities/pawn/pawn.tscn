@@ -58,7 +58,7 @@ preconditions = {
 script = ExtResource("6_u7h61")
 target_group = "storage"
 item_id = "wood"
-method_interaction = "store_item"
+method_interaction = "drop"
 validation_method = "has_space"
 effects = {
 "storage_filled": true

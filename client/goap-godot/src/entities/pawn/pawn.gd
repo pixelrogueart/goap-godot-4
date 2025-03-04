@@ -60,9 +60,12 @@ func _process(delta: float) -> void:
 	if goap_agent._current_goal:
 		debug_goal_goap_label.text = goap_agent._current_goal.name
 	state_manager.process(delta)
+	hold_item()
 	DebugManager.debug_node.update_world_log(goap_agent._world_state._state)
+
+func hold_item():
 	if hauled_item:
-		hauled_item.global_position = self.global_position
+		hauled_item.tween_to_position(self.global_position, 0.1)
 
 
 func _physics_process(delta: float) -> void:
@@ -104,14 +107,8 @@ func has_reached_target() -> bool:
 	return world_node.is_at_grid_position(self, target_position)
 
 
-func tween_to_target(_speed = 0.3) -> void:
-	var new_position = world_node.snap_to_grid(global_position)
-	var tween: Tween = create_tween()
-	tween.tween_property(self, "global_position", new_position, _speed)
-
-
 func stop_moving() -> void:
-	tween_to_target()
+	tween_to_grid_position(target_position)
 	change_state("Idle")
 
 

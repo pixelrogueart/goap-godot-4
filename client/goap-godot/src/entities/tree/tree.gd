@@ -21,8 +21,8 @@ func chop(entity: Entity):
 	update_state()
 	$AnimationPlayer.play("chop")
 	if health <= 0:
-		entity.world_state.set_state("wood", entity.world_state.get_state("wood", 0) + 1)
 		var log = log_scene.instantiate()
 		world_node.entities_layer.add_child(log)
 		log.global_position = world_node.get_point_position(world_node.find_closest_available_position(world_node.to_grid_id(self.global_position),1))
+		log.world_node = world_node
 	return health <= 0
