@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=4 uid="uid://ddx4obdacpv5x"]
+[gd_scene load_steps=7 format=4 uid="uid://ddx4obdacpv5x"]
 
 [ext_resource type="PackedScene" uid="uid://bmh8e778cm4wa" path="res://src/entities/pawn/pawn.tscn" id="1_33gke"]
 [ext_resource type="Script" path="res://src/world_manager.gd" id="1_m4fjl"]
 [ext_resource type="Texture2D" uid="uid://cqs31x4d5kmws" path="res://assets/kenney-medieval-rts/Tilesheet/medieval_tilesheet.png" id="2_xc2a2"]
+[ext_resource type="Script" path="res://src/debug.gd" id="4_bekgu"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2ytl6"]
 texture = ExtResource("2_xc2a2")
@@ -168,3 +169,45 @@ unique_name_in_owner = true
 y_sort_enabled = true
 
 [node name="Pawn" parent="EntitiesLayer" instance=ExtResource("1_33gke")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Debug" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_bekgu")
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/Debug"]
+custom_minimum_size = Vector2(256, 128)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Goals" type="VBoxContainer" parent="CanvasLayer/Debug/PanelContainer"]
+layout_mode = 2
+
+[node name="GoalLog" type="RichTextLabel" parent="CanvasLayer/Debug/PanelContainer/Goals"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+text = "Test"
+
+[node name="Panel" type="PanelContainer" parent="CanvasLayer/Debug"]
+layout_mode = 2
+offset_top = 508.0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="Log" type="VBoxContainer" parent="CanvasLayer/Debug/Panel"]
+layout_mode = 2
+
+[node name="MessageLog" type="RichTextLabel" parent="CanvasLayer/Debug/Panel/Log"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+text = "Test Log"

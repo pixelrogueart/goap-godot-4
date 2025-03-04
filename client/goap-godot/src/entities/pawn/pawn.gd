@@ -17,7 +17,6 @@ var target_position = null
 
 var current_state: String
 
-
 var wood: int = 0
 
 

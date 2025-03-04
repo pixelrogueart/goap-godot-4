@@ -59,9 +59,12 @@ func init(actor):
 
 func _get_best_goal():
 	var highest_priority
+	var text = ""
 	for goal in _goals:
 		if goal.is_valid() and (highest_priority == null or goal.get_priority() > highest_priority.get_priority()):
 			highest_priority = goal
+		text += "\n Is %s valid? %s "%[goal.get_action_name(), goal.is_valid()]
+	DebugManager.debug_node.update_goal_log(text)
 		#print("Is %s valid? %s "%[goal.get_action_name(), goal.is_valid()])
 	return highest_priority
 
