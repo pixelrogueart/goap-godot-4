@@ -1,4 +1,4 @@
-class_name KeepStorageFilled
+class_name HaulGoal
 extends GoapGoal
 
 

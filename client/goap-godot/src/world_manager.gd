@@ -22,6 +22,23 @@ var picked_positions = []
 
 var world_state: GoapWorldState = GoapWorldState.new()
 
+@onready var available_buildings = {
+	"house": {
+		"image":load("res://assets/kenney-medieval-rts/PNG/Default size/Structure/medievalStructure_17.png"),
+		"materials":{
+			"wood": 3, 
+			"stone": 3
+			},
+		},
+	"storage": {
+		"image":load("res://assets/kenney-medieval-rts/PNG/Default size/Structure/medievalStructure_16.png"),
+		"materials":{
+			"wood": 1
+		},
+		},
+}
+var selected_building = 0
+var build_queue = {}
 
 func _ready() -> void:
 	randomize()
@@ -159,6 +176,21 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		mouse_position = snap_to_grid(get_global_mouse_position())
 		queue_redraw()
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			if not mouse_position in build_queue:
+				if selected_building:
+					build_queue[mouse_position] = selected_building
+					var new_blueprint = load("res://src/entities/blueprint/blueprint.tscn").instantiate()
+					entities_layer.add_child(new_blueprint)
+					new_blueprint.global_position = get_point_position(mouse_position)
+					new_blueprint.set_icon(selected_building.image)
+	if event is InputEventKey and event.pressed:
+		if event.keycode == KEY_1:
+			selected_building = available_buildings[available_buildings.keys()[0]]
+		elif event.keycode == KEY_2:
+			selected_building = available_buildings[available_buildings.keys()[1]]
+
 
 
 func snap_to_grid(global_pos: Vector2) -> Vector2:

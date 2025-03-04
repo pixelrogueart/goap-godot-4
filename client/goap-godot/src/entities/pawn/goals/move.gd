@@ -1,4 +1,4 @@
-class_name ArriveAtLocationGoal
+class_name MoveGoal
 extends GoapGoal
 
 func is_valid() -> bool:

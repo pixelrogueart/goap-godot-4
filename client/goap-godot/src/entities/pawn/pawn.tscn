@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bmh8e778cm4wa"]
+[gd_scene load_steps=18 format=3 uid="uid://bmh8e778cm4wa"]
 
 [ext_resource type="Script" path="res://src/entities/pawn/pawn.gd" id="1_1ileu"]
 [ext_resource type="Texture2D" uid="uid://ca6t5rlmqvr6a" path="res://assets/kenney-medieval-rts/PNG/Default size/Unit/medievalUnit_06.png" id="1_aphg3"]
@@ -12,9 +12,10 @@
 [ext_resource type="Script" path="res://src/entities/pawn/actions/wait.gd" id="6_l2x3u"]
 [ext_resource type="Script" path="res://src/entities/pawn/actions/drop.gd" id="6_u7h61"]
 [ext_resource type="Script" path="res://src/entities/pawn/goals/relax.gd" id="7_2jg5b"]
-[ext_resource type="Script" path="res://src/entities/pawn/goals/keep_storage_filled.gd" id="8_iltw4"]
-[ext_resource type="Script" path="res://src/entities/pawn/goals/arrive_at_location.gd" id="9_mc2pw"]
+[ext_resource type="Script" path="res://src/entities/pawn/goals/haul.gd" id="8_iltw4"]
+[ext_resource type="Script" path="res://src/entities/pawn/goals/move.gd" id="9_mc2pw"]
 [ext_resource type="Script" path="res://src/entities/pawn/goals/sleep.gd" id="10_63wsx"]
+[ext_resource type="Script" path="res://src/entities/pawn/goals/build.gd" id="10_aah0l"]
 [ext_resource type="Script" path="res://src/entities/pawn/debug_grid.gd" id="14_yhby5"]
 
 [node name="Pawn" type="CharacterBody2D" node_paths=PackedStringArray("state_manager", "goap_agent")]
@@ -32,7 +33,7 @@ goals_node = NodePath("Goals")
 
 [node name="Actions" type="Node" parent="GoapAgent"]
 
-[node name="ChopTree" type="Node" parent="GoapAgent/Actions"]
+[node name="Interact" type="Node" parent="GoapAgent/Actions"]
 script = ExtResource("4_nod00")
 target_group = "tree"
 method_interaction = "chop"
@@ -96,14 +97,22 @@ preconditions = {
 
 [node name="Goals" type="Node" parent="GoapAgent"]
 
-[node name="FillWoodStorage" type="Node" parent="GoapAgent/Goals"]
+[node name="Haul" type="Node" parent="GoapAgent/Goals"]
 script = ExtResource("8_iltw4")
 priority = 1
 desired_state = {
 "storage_filled": true
 }
+enabled = false
 
-[node name="ArriveAtLocation" type="Node" parent="GoapAgent/Goals"]
+[node name="Build" type="Node" parent="GoapAgent/Goals"]
+script = ExtResource("10_aah0l")
+priority = 1
+desired_state = {
+"built": true
+}
+
+[node name="Move" type="Node" parent="GoapAgent/Goals"]
 script = ExtResource("9_mc2pw")
 priority = 2
 desired_state = {
