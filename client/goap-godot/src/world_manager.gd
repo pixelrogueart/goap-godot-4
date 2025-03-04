@@ -59,10 +59,13 @@ func _draw() -> void:
 func _setup_entities():
 	for entity: Node2D in entities_layer.get_children():
 		entity.global_position = snap_to_grid(entity.global_position)
-		if entity is PawnEntity:
+		if entity is Entity:
 			entity.world_node = self
-		else:
-			grid.set_point_solid(to_grid_coords(entity.global_position),true)
+		if entity is Entity:
+			if entity.is_solid:
+				grid.set_point_solid(to_grid_coords(entity.global_position),true)
+			else:
+				grid.set_point_weight_scale(to_grid_coords(entity.global_position),1.0)
 
 
 func _generate_grid() -> void:

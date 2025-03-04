@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bc038x40ixfhe" path="res://assets/kenney-medieval-rts/PNG/Default size/Structure/medievalStructure_16.png" id="2_tml24"]
 [ext_resource type="Texture2D" uid="uid://bw07h7fmxmbb6" path="res://assets/kenney-medieval-rts/PNG/Default size/Environment/medievalEnvironment_06.png" id="3_u2078"]
 
-[node name="Storage" type="Node2D" groups=["storage"]]
+[node name="Storage" type="CharacterBody2D" groups=["storage"]]
 script = ExtResource("1_64y1d")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

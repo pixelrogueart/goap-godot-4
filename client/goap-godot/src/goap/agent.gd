@@ -37,8 +37,8 @@ func _process(delta):
 
 
 func init(actor):
-	_world_state = GoapWorldState.new()
 	_actor = actor
+	_world_state = _actor.world_state
 	var _actions = []
 	for child in goals_node.get_children():
 		if not child is GoapGoal:

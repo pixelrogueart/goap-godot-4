@@ -1,5 +1,5 @@
 class_name PawnEntity
-extends CharacterBody2D
+extends Entity
 
 @onready var debug_state_label = %DebugStateLabel
 @onready var debug_goap_label = %DebugGoapAction
@@ -9,7 +9,8 @@ extends CharacterBody2D
 @export var goap_agent: GoapAgent
 @export var reach_distance: int = 5
 
-var world_node: WorldManager
+
+var world_state: GoapWorldState = GoapWorldState.new()
 
 var path: PackedVector2Array = []  # Stores the path for movement
 var step_position = null
@@ -52,6 +53,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	super._process(delta)
 	if goap_agent._current_plan:
 		debug_goap_label.text = goap_agent._current_plan[goap_agent._current_plan_step].name
 	else:
@@ -106,9 +108,11 @@ func tween_to_target(_speed = 0.3) -> void:
 	var tween: Tween = create_tween()
 	tween.tween_property(self, "global_position", new_position, _speed)
 
+
 func stop_moving() -> void:
 	tween_to_target()
 	change_state("Idle")
+
 
 func calculate_path(target_pos: Vector2) -> Array:
 	var start_id = world_node.to_grid_id(global_position)
@@ -129,11 +133,13 @@ func set_move_target(_new_target) -> void:
 func set_target_to_entity(_new_target) -> void:
 	var updated_target = world_node.get_point_position(world_node.find_closest_available_position(world_node.to_grid_id(_new_target),1))
 	path = calculate_path(updated_target)
-	if path:		change_state("Move")
+	if path:
+		change_state("Move")
 
 
 func has_wood() -> bool:
 	return wood > 0
+
 
 func add_wood():
 	wood += 1

@@ -1,12 +1,12 @@
 class_name StorageEntity
-extends Node2D
+extends Entity
 
 
 var wood_amount = 0
 var storage_space = 3
 
 
-func insert_wood():
+func insert_wood(entity: Entity):
 	wood_amount += 1
 	update_state()
 	print("Inserted Wood! Wood amount: %s"%wood_amount)

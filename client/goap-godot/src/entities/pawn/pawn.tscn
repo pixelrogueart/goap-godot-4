@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bmh8e778cm4wa"]
+[gd_scene load_steps=15 format=3 uid="uid://bmh8e778cm4wa"]
 
 [ext_resource type="Script" path="res://src/entities/pawn/pawn.gd" id="1_1ileu"]
 [ext_resource type="Texture2D" uid="uid://ca6t5rlmqvr6a" path="res://assets/kenney-medieval-rts/PNG/Default size/Unit/medievalUnit_06.png" id="1_aphg3"]
@@ -13,6 +13,7 @@
 [ext_resource type="Script" path="res://src/entities/pawn/goals/keep_storage_filled.gd" id="8_iltw4"]
 [ext_resource type="Script" path="res://src/entities/pawn/goals/arrive_at_location.gd" id="9_mc2pw"]
 [ext_resource type="Script" path="res://src/entities/pawn/goals/sleep.gd" id="10_63wsx"]
+[ext_resource type="Script" path="res://src/entities/pawn/debug_grid.gd" id="14_yhby5"]
 
 [node name="Pawn" type="CharacterBody2D" node_paths=PackedStringArray("state_manager", "goap_agent")]
 script = ExtResource("1_1ileu")
@@ -55,8 +56,9 @@ preconditions = {
 script = ExtResource("4_nod00")
 target_group = "house"
 method_interaction = "sleep"
+validation_method = "is_available"
 effects = {
-"at_bed": true
+"sleeping": true
 }
 
 [node name="MoveTo" type="Node" parent="GoapAgent/Actions"]
@@ -90,7 +92,7 @@ desired_state = {
 [node name="SleepAtBed" type="Node" parent="GoapAgent/Goals"]
 script = ExtResource("10_63wsx")
 desired_state = {
-"at_bed": true
+"sleeping": true
 }
 
 [node name="Relax" type="Node" parent="GoapAgent/Goals"]
@@ -157,3 +159,8 @@ layout_mode = 2
 text = "Relax"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="DebugGrid" type="Node" parent="Debug"]
+
+[node name="DebugGrid" type="Node2D" parent="Debug/DebugGrid"]
+script = ExtResource("14_yhby5")

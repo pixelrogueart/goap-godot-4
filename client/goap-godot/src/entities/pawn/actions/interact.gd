@@ -16,7 +16,12 @@ func _ready() -> void:
 	cooldown_timer.one_shot = true
 
 func is_valid() -> bool:
-	return _actor.find_entities(target_group).size() > 0
+	var target_group_entities = _actor.find_entities(target_group)
+	if _actor.find_entities(target_group).size() < 0:
+		return false
+	if validation_method:
+		return call_validation_method(target_group_entities[0])
+	return true
 
 
 func get_cost(blackboard) -> int:
@@ -38,12 +43,15 @@ func perform(actor, delta) -> bool:
 		if actor.world_node.is_next_to_grid_position(actor, _closest_entity.global_position):
 			_actor.stop_moving()
 			if cooldown_timer.is_stopped():
-				if _closest_entity.call(method_interaction):
+				if _closest_entity.call(method_interaction, actor):
 					set_effects()
 					return true
 				cooldown_timer.start(interaction_cooldown)
 			return false
 		else:
 			if actor.current_state != "Move":
-				actor.set_target_to_entity(_closest_entity.global_position)
+				if _closest_entity.is_solid:
+					actor.set_target_to_entity(_closest_entity.global_position)
+				else:
+					actor.set_move_target(_closest_entity.global_position)
 	return false

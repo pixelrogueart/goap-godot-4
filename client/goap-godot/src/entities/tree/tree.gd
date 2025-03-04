@@ -1,5 +1,5 @@
 class_name TreeEntity
-extends Node2D
+extends Entity
 
 var health: int = 3
 
@@ -14,7 +14,7 @@ func update_state() -> void:
 		$ChoppedSprite2D.show()
 		$GrownSprite2D.hide()
 
-func chop():
+func chop(entity: Entity):
 	health -= 1 
 	update_state()
 	$AnimationPlayer.play("chop")
