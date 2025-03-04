@@ -59,6 +59,7 @@ func _process(delta: float) -> void:
 	if goap_agent._current_goal:
 		debug_goal_goap_label.text = goap_agent._current_goal.name
 	state_manager.process(delta)
+	DebugManager.debug_node.update_world_log(goap_agent._world_state._state)
 
 
 func _physics_process(delta: float) -> void:
@@ -110,7 +111,6 @@ func stop_moving() -> void:
 	change_state("Idle")
 
 func calculate_path(target_pos: Vector2) -> Array:
-	var updated_target_id = world_node.find_closest_available_position(world_node.to_grid_id(target_pos), 1)
 	var start_id = world_node.to_grid_id(global_position)
 	var end_id = world_node.to_grid_id(target_pos)
 	var calculated_path = []
@@ -127,11 +127,9 @@ func set_move_target(_new_target) -> void:
 
 
 func set_target_to_entity(_new_target) -> void:
-	var updated_target_id = world_node.find_closest_available_position(world_node.to_grid_id(_new_target), 2)
-	updated_target_id = world_node.get_point_position(updated_target_id)
-	path = calculate_path(updated_target_id)
-	if path:
-		change_state("Move")
+	var updated_target = world_node.get_point_position(world_node.find_closest_available_position(world_node.to_grid_id(_new_target),1))
+	path = calculate_path(updated_target)
+	if path:		change_state("Move")
 
 
 func has_wood() -> bool:

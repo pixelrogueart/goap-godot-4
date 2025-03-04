@@ -20,12 +20,24 @@ var last_pawn_position:Vector2 = Vector2.ZERO
 
 var picked_positions = []
 
+var world_state: GoapWorldState = GoapWorldState.new()
+
 
 func _ready() -> void:
 	randomize()
 	_generate_world()
 	_generate_grid()
 	_setup_entities()
+
+
+func _process(delta: float) -> void:
+	update_world_state()
+
+
+func update_world_state():
+	for entity: Node2D in entities_layer.get_children():
+		if entity is PawnEntity:
+			entity.goap_agent._world_state._state.merge(world_state._state, true)
 
 
 func _draw() -> void:
@@ -153,7 +165,7 @@ func is_at_grid_position(node: Node2D, _position: Vector2) -> bool:
 func is_next_to_grid_position(node: Node2D, target_point: Vector2) -> bool:
 	var target_id = to_grid_id(target_point)
 	var pawn_id = to_grid_id(node.global_position)
-	
-	if abs(target_id.x - pawn_id.x) > 1 or abs(target_id.y - pawn_id.y):
-		return false
-	return true
+	var delta = target_id - pawn_id
+	if abs(delta.x) <= 1 and abs(delta.y) <= 1 and delta != Vector2i.ZERO:
+		return true
+	return false

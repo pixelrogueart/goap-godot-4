@@ -8,13 +8,14 @@ var _current_plan
 var _current_plan_step = 0
 
 var _actor
-var _world_state
+var _world_state: GoapWorldState
 
 var _action_planner: GoapActionPlanner
 @export var actions_node: Node 
 @export var goals_node: Node
 
 var last_blackboard = {}
+
 
 func _process(delta):
 	var goal = _get_best_goal()
@@ -49,7 +50,7 @@ func init(actor):
 		_actions.push_back(child)
 	_action_planner = GoapActionPlanner.new()
 	_action_planner.set_actions(_actions)
-	
+
 	for goal in _goals:
 		goal.init(_actor, _world_state)
 
@@ -65,7 +66,7 @@ func _get_best_goal():
 			highest_priority = goal
 		text += "\n Is %s valid? %s "%[goal.get_action_name(), goal.is_valid()]
 	DebugManager.debug_node.update_goal_log(text)
-		#print("Is %s valid? %s "%[goal.get_action_name(), goal.is_valid()])
+	#print("Is %s valid? %s "%[goal.get_action_name(), goal.is_valid()])
 	return highest_priority
 
 
