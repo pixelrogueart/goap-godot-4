@@ -99,6 +99,36 @@ func find_closest_entity(group_name):
 	return closest_element
 
 
+func find_closest_item(item_id):
+	var elements = find_entities("item")
+	for i in elements:
+		if i.item_id != item_id:
+			elements.pop_at(elements.find(i))
+	var closest_element
+	var closest_distance = 10000000
+	for element in elements:
+		var distance = self.global_position.distance_to(element.global_position)
+		if  distance < closest_distance and element.is_available(self):
+			closest_distance = distance
+			closest_element = element
+	return closest_element
+
+
+func find_closest_provider_for_material(item_id):
+	var elements = find_entities("material_provider")
+	for i in elements:
+		if i.material_drop != item_id:
+			elements.pop_at(elements.find(i))
+	var closest_element
+	var closest_distance = 10000000
+	for element in elements:
+		var distance = self.global_position.distance_to(element.global_position)
+		if  distance < closest_distance and element.is_available(self):
+			closest_distance = distance
+			closest_element = element
+	return closest_element
+
+
 func find_entities(target_group: String) -> Array: 
 	return get_tree().get_nodes_in_group(target_group)
 
@@ -142,3 +172,20 @@ func set_target_to_entity(_new_target) -> void:
 	path = calculate_path(updated_target)
 	if path:
 		change_state("Move")
+
+
+func generate_build_preconditions(build_data) -> void:
+	var materials = build_data.materials
+	var entity: BlueprintEntity = build_data.entity
+	%Build.preconditions = {}
+	%Build.effects = {"built": true}
+	%CompleteBlueprint.preconditions = {}
+	%CompleteBlueprint.effects = {}
+	%CompleteBlueprint.drop_location = build_data.position
+	var items_needed = []
+	for i in materials.keys():
+		for a in range(materials[i]):
+			items_needed.push_back(i)
+	%CompleteBlueprint.items_needed = items_needed
+	%CompleteBlueprint.effects["has_materials"] = true
+	%Build.preconditions["has_materials"] = true

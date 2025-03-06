@@ -2,7 +2,8 @@
 
 [ext_resource type="Script" path="res://src/entities/blueprint/blueprint.gd" id="1_5a4sg"]
 
-[node name="Blueprint" type="CharacterBody2D"]
+[node name="Blueprint" type="CharacterBody2D" groups=["blueprint"]]
 script = ExtResource("1_5a4sg")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.466667, 1, 1, 0.584314)

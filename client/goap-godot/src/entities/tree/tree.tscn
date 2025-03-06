@@ -48,7 +48,7 @@ _data = {
 "chop": SubResource("Animation_i8pi3")
 }
 
-[node name="Tree" type="CharacterBody2D" groups=["tree"]]
+[node name="Tree" type="CharacterBody2D" groups=["material_provider", "tree"]]
 script = ExtResource("1_8h3xn")
 
 [node name="ChoppedSprite2D" type="Sprite2D" parent="."]

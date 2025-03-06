@@ -2,11 +2,13 @@ class_name WorldManager
 extends Node2D
 
 @export var tree_amount: int = 5
+@export var rock_amount: int = 5
 @export var draw_grid: bool = false
 
 @onready var floor_layer: TileMapLayer = %FloorLayer
 @onready var entities_layer: Node2D = %EntitiesLayer
 @onready var tree_scene = load("res://src/entities/tree/tree.tscn")
+@onready var rock_scene = load("res://src/entities/rock/rock.tscn")
 @onready var house_scene = load("res://src/entities/house/house.tscn")
 @onready var storage_scene = load("res://src/entities/storage/storage.tscn")
 
@@ -55,7 +57,15 @@ func update_world_state():
 	for entity: Node2D in entities_layer.get_children():
 		if entity is PawnEntity:
 			entity.goap_agent._world_state._state.merge(world_state._state, true)
-
+	var trees = get_tree().get_nodes_in_group("tree")
+	var rocks = get_tree().get_nodes_in_group("rock")
+	if trees.size() > 0:
+		for child in trees:
+			if child.health > 0:
+				world_state.set_state("tree", true)
+				break
+			world_state.set_state("tree", false)
+	world_state.set_state("rock", rocks.size() > 0)
 
 func _draw() -> void:
 	draw_circle(mouse_position, 3, Color.GRAY)  
@@ -114,14 +124,14 @@ func _generate_world():
 
 	world_size = Vector2i(max_x - min_x + 1, max_y - min_y + 1)
 
-	# Store already picked positions
-	var house = house_scene.instantiate()
-	entities_layer.add_child(house)
-	var storage = storage_scene.instantiate()
-	entities_layer.add_child(storage)
-	
-	house.global_position = pick_random_position() * cell_size
-	storage.global_position = pick_random_position() * cell_size
+	## Store already picked positions
+	#var house = house_scene.instantiate()
+	#entities_layer.add_child(house)
+	#var storage = storage_scene.instantiate()
+	#entities_layer.add_child(storage)
+	#
+	#house.global_position = pick_random_position() * cell_size
+	#storage.global_position = pick_random_position() * cell_size
 	# Generate trees
 	for i in range(tree_amount):
 		var new_tree = tree_scene.instantiate()
@@ -130,6 +140,15 @@ func _generate_world():
 		var picked_pos = pick_random_position()
 		# Store the position and set tree position
 		new_tree.global_position = picked_pos * cell_size
+		new_tree.name = "Tree"
+	for i in range(rock_amount):
+		var new_rock = rock_scene.instantiate()
+		entities_layer.add_child(new_rock)
+		# Find a unique position
+		var picked_pos = pick_random_position()
+		# Store the position and set tree position
+		new_rock.global_position = picked_pos * cell_size
+		new_rock.name = "Rock"
 
 
 func find_closest_available_position(from_reference_pos: Vector2i, reference_pos: Vector2i, radius: int = 5) -> Vector2i:
@@ -181,10 +200,18 @@ func _unhandled_input(event: InputEvent) -> void:
 			if not mouse_position in build_queue:
 				if selected_building:
 					build_queue[mouse_position] = selected_building
+					build_queue[mouse_position].position = mouse_position
 					var new_blueprint = load("res://src/entities/blueprint/blueprint.tscn").instantiate()
 					entities_layer.add_child(new_blueprint)
-					new_blueprint.global_position = get_point_position(mouse_position)
+					new_blueprint.global_position = get_point_position(to_grid_id(mouse_position))
 					new_blueprint.set_icon(selected_building.image)
+					build_queue[mouse_position].entity = new_blueprint
+					new_blueprint.items_needed = selected_building.materials
+					var items_gathered = selected_building.materials.duplicate()
+					for i in items_gathered.keys():
+						items_gathered[i] = 0
+					new_blueprint.items_gathered = selected_building.materials
+
 	if event is InputEventKey and event.pressed:
 		if event.keycode == KEY_1:
 			selected_building = available_buildings[available_buildings.keys()[0]]
@@ -221,6 +248,15 @@ func is_at_grid_position(node: Node2D, _position: Vector2) -> bool:
 	var pawn_id = to_grid_id(node.global_position)
 	return target_id == pawn_id
 
+
+func get_entity_at_position(pos, entity: String):
+	pos = to_grid_id(pos)
+	var entities = get_tree().get_nodes_in_group(entity)
+	for e in entities:
+		var e_pos = to_grid_id(e.global_position)
+		if e_pos == pos:
+			return e
+	return null
 
 func is_next_to_grid_position(node: Node2D, target_point: Vector2) -> bool:
 	var target_id = to_grid_id(target_point)

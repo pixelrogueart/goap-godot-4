@@ -6,11 +6,11 @@
 [ext_resource type="Script" path="res://src/state-machine/StateManager.gd" id="4_iqnt5"]
 [ext_resource type="Script" path="res://src/entities/pawn/actions/interact.gd" id="4_nod00"]
 [ext_resource type="Script" path="res://src/entities/pawn/states/pawn_idle_state.gd" id="5_8kx63"]
-[ext_resource type="Script" path="res://src/entities/pawn/actions/grab.gd" id="5_mayto"]
+[ext_resource type="Script" path="res://src/entities/pawn/actions/haul.gd" id="5_nefqp"]
 [ext_resource type="Script" path="res://src/entities/pawn/actions/move_to.gd" id="5_x6gcv"]
 [ext_resource type="Script" path="res://src/entities/pawn/states/pawn_move_state.gd" id="6_fs0un"]
 [ext_resource type="Script" path="res://src/entities/pawn/actions/wait.gd" id="6_l2x3u"]
-[ext_resource type="Script" path="res://src/entities/pawn/actions/drop.gd" id="6_u7h61"]
+[ext_resource type="Script" path="res://src/entities/pawn/actions/complete_blueprint.gd" id="6_lq0jw"]
 [ext_resource type="Script" path="res://src/entities/pawn/goals/relax.gd" id="7_2jg5b"]
 [ext_resource type="Script" path="res://src/entities/pawn/goals/haul.gd" id="8_iltw4"]
 [ext_resource type="Script" path="res://src/entities/pawn/goals/move.gd" id="9_mc2pw"]
@@ -33,48 +33,59 @@ goals_node = NodePath("Goals")
 
 [node name="Actions" type="Node" parent="GoapAgent"]
 
-[node name="Interact" type="Node" parent="GoapAgent/Actions"]
+[node name="Chop" type="Node" parent="GoapAgent/Actions"]
+unique_name_in_owner = true
 script = ExtResource("4_nod00")
 target_group = "tree"
 method_interaction = "chop"
+interaction_cost = 2
+effects = {
+"wood": true
+}
+preconditions = {
+"tree": true
+}
+
+[node name="Mine" type="Node" parent="GoapAgent/Actions"]
+unique_name_in_owner = true
+script = ExtResource("4_nod00")
+target_group = "rock"
+method_interaction = "mine"
+interaction_cooldown = 1.5
+interaction_cost = 5
+effects = {
+"stone": true
+}
+preconditions = {
+"rock": true
+}
+
+[node name="Build" type="Node" parent="GoapAgent/Actions"]
+unique_name_in_owner = true
+script = ExtResource("4_nod00")
+target_group = "blueprint"
+method_interaction = "build"
 interaction_cost = 20
 effects = {
-"has_available_item": true
+"built": true
 }
 preconditions = {
-"has_available_tree": true
+"has_materials": true
 }
 
-[node name="Grab" type="Node" parent="GoapAgent/Actions"]
-script = ExtResource("5_mayto")
-target_group = "item"
-item_id = "wood"
-method_interaction = "grab"
-validation_method = "is_available"
-effects = {
-"has_item": true
-}
-preconditions = {
-"has_available_item": true,
-"has_item": false
-}
+[node name="Haul" type="Node" parent="GoapAgent/Actions"]
+unique_name_in_owner = true
+script = ExtResource("5_nefqp")
 
-[node name="Drop" type="Node" parent="GoapAgent/Actions"]
-script = ExtResource("6_u7h61")
-target_group = "storage"
-item_id = "wood"
-method_interaction = "drop"
-validation_method = "has_space"
+[node name="CompleteBlueprint" type="Node" parent="GoapAgent/Actions"]
+unique_name_in_owner = true
+script = ExtResource("6_lq0jw")
 effects = {
-"has_item": false,
-"storage_filled": true
-}
-preconditions = {
-"has_available_space": true,
-"has_item": true
+"has_materials": true
 }
 
 [node name="Sleep" type="Node" parent="GoapAgent/Actions"]
+unique_name_in_owner = true
 script = ExtResource("4_nod00")
 target_group = "house"
 method_interaction = "sleep"
@@ -84,12 +95,14 @@ effects = {
 }
 
 [node name="MoveTo" type="Node" parent="GoapAgent/Actions"]
+unique_name_in_owner = true
 script = ExtResource("5_x6gcv")
 effects = {
 "arrived_at_location": true
 }
 
 [node name="Wait" type="Node" parent="GoapAgent/Actions"]
+unique_name_in_owner = true
 script = ExtResource("6_l2x3u")
 preconditions = {
 "storage_empty": false

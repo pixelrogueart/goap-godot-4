@@ -59,6 +59,7 @@ func _build_plans(step, blackboard):
 		return true
 
 	for action in _actions:
+		#print("Action: %s Valid: %s"%[action, action.is_valid()])
 		if not action.is_valid():
 			continue
 

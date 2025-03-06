@@ -2,8 +2,13 @@ class_name TreeEntity
 extends Entity
 
 @onready var log_scene = load("res://src/entities/item/item.tscn")
+@export var material_drop: String = "wood"
+@export var material_provider_method: String = "chop"
+@export var interaction_cost: int = 5
+@export var interaction_time: float = 1.0
 
 var health: int = 3
+
 
 func _ready() -> void:
 	$ChoppedSprite2D.hide()
@@ -33,8 +38,3 @@ func chop(entity: Entity):
 
 func is_available(entity: Entity) -> bool:
 	return health > 0
-
-
-func _process(delta: float) -> void:
-	if self.health > 0:
-		world_node.world_state.set_state("has_available_tree", true)

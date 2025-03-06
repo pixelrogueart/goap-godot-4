@@ -7,6 +7,7 @@ var available = true
 var world_node: WorldManager
 var _last_position: Vector2
 
+
 func _process(delta: float) -> void:
 	if _last_position != global_position:
 		if !world_node:

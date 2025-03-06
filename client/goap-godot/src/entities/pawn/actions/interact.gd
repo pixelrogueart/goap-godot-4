@@ -3,7 +3,7 @@ class_name InteractAction
 
 
 @export var target_group: String
-
+@export var amount_needed = 1
 @export var method_interaction: String
 @export var validation_method: String
 
