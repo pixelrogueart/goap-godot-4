@@ -1,12 +1,23 @@
+## A* backward-search planner that builds action chains for [GoapGoal]s.
+##
+## Given a goal's [member GoapGoal.desired_state] and the current world state
+## (blackboard), the planner searches all registered [GoapAction]s to find
+## the cheapest sequence whose effects satisfy the desired state.[br][br]
+## You don't interact with this class directly — [GoapAgent] creates and
+## manages it internally.
 class_name GoapActionPlanner
 extends Node
 
 var _actions: Array
 
+
+## Registers the array of [GoapAction]s available for planning.
 func set_actions(actions: Array):
 	_actions = actions
 
 
+## Builds and returns the cheapest action plan for [param goal].[br]
+## Returns an empty [Array] if no valid plan exists.
 func get_plan(goal: GoapGoal, blackboard = {}) -> Array:
 	if not goal:
 		return []
@@ -18,6 +29,7 @@ func get_plan(goal: GoapGoal, blackboard = {}) -> Array:
 
 	return _find_best_plan(goal, desired_state, blackboard)
 
+## Finds the best plan for [param goal] given [param desired_state].
 func _find_best_plan(goal, desired_state, blackboard):
 	var root = {
 		"action": goal,
@@ -31,6 +43,7 @@ func _find_best_plan(goal, desired_state, blackboard):
 
 	return []
 
+## Returns the plan with the lowest total cost.
 func _get_cheapest_plan(plans):
 	var best_plan = null
 	for p in plans:
@@ -42,6 +55,8 @@ func _get_cheapest_plan(plans):
 	
 	return []
 
+## Recursively expands the search tree, returning [code]true[/code] if at
+## least one complete path to a satisfied state was found.
 func _build_plans(step, blackboard):
 	var has_followup = false
 
@@ -103,6 +118,7 @@ func _build_plans(step, blackboard):
 	return has_followup
 
 
+## Converts the recursive tree into a flat array of plans with total costs.
 func _transform_tree_into_array(p, blackboard):
 	var plans = []
 

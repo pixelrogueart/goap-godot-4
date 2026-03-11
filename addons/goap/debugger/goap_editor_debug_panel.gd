@@ -1,3 +1,8 @@
+## Runtime debug panel shown inside the GOAP editor debugger tab.
+##
+## Displays a world-state sidebar (key-value list with colour-coded indicators)
+## and a [GraphEdit] that visualises the current action plan as connected
+## [GraphNode]s with live status (running / done / pending).
 @tool
 extends VBoxContainer
 

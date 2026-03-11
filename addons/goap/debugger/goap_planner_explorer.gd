@@ -1,3 +1,8 @@
+## Static plan-tree explorer shown in the Planner tab of the GOAP debugger.
+##
+## Lists all registered goals in a sidebar. When a goal is selected the panel
+## builds and displays every possible action chain (tree) that could satisfy it,
+## letting designers inspect preconditions and effects at a glance.
 @tool
 extends HSplitContainer
 

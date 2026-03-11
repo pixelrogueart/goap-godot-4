@@ -1,15 +1,34 @@
+## Central GOAP brain that selects goals, builds plans, and executes actions.
+##
+## Attach this node to any actor and assign [member goals_node] and
+## [member actions_node] to containers holding [GoapGoal] and [GoapAction]
+## children respectively. Call [method init] once after the scene is ready,
+## then call [method process] every frame.[br][br]
+## [b]Signals:[/b][br]
+## - [signal plan_changed] — emitted when a new action plan is generated.[br]
+## - [signal goal_changed] — emitted when the active goal switches.[br]
+## - [signal action_changed] — emitted when the currently running action changes.
 class_name GoapAgent
 extends Node
 
 const DEBUG_PREFIX := "goap_debug"
 
+## Emitted when a new action plan is generated or cleared.
 signal plan_changed(new_plan: Array)
+
+## Emitted when the active [GoapGoal] changes.
 signal goal_changed(new_goal: GoapGoal)
+
+## Emitted when the currently executing [GoapAction] changes.
 signal action_changed(new_action: GoapAction)
 
+## Node whose children are the available [GoapAction]s.
+@export var actions_node: Node
 
-@export var actions_node: Node 
+## Node whose children are the available [GoapGoal]s.
 @export var goals_node: Node
+
+## When [code]true[/code], sends runtime data to the editor debugger panel.
 @export var debug_enabled := true
 
 var _goals = []
@@ -21,10 +40,13 @@ var _world_state: GoapWorldState
 var _action_planner: GoapActionPlanner
 var _finished_last_plan = false
 var _last_blackboard = {}
+
+## The last [GoapAction] that finished executing.
 var previous_action: GoapAction = null
 var _debug_id := ""
 
 
+## Main tick — call once per frame from [code]_process[/code] or [code]_physics_process[/code].
 func process(delta):
 	var goal = _get_best_goal()
 	if _finished_last_plan:
@@ -91,6 +113,9 @@ func process(delta):
 		_follow_plan(_current_plan, delta)
 
 
+## Initialises the agent with the owning [param actor] node.[br]
+## Creates the [GoapWorldState], discovers goals and actions from the
+## exported node containers, and registers with the editor debugger.
 func init(actor):
 	_actor = actor
 	_world_state = GoapWorldState.new()
@@ -119,6 +144,7 @@ func init(actor):
 	_send_debug_register(actions)
 
 
+## Returns the highest-priority, valid, enabled [GoapGoal], or [code]null[/code].
 func _get_best_goal():
 	var highest_priority = null
 	var _debug_text = ""
@@ -130,6 +156,7 @@ func _get_best_goal():
 	return highest_priority
 
 
+## Steps through the current action plan, executing one action at a time.
 func _follow_plan(plan, delta):
 	if plan.size() == 0:
 		print("Warning: _follow_plan called with empty plan")
@@ -214,10 +241,12 @@ func _follow_plan(plan, delta):
 				_current_plan_step = 0
 
 
+## Returns the currently active [GoapGoal], or [code]null[/code].
 func get_current_goal() -> GoapGoal:
 	return _current_goal
 
 
+## Returns the [GoapAction] currently being executed, or [code]null[/code].
 func get_current_action() -> GoapAction:
 	if _current_plan.size() > 0 and _current_plan_step < _current_plan.size():
 		var current_item = _current_plan[_current_plan_step]
@@ -226,10 +255,12 @@ func get_current_action() -> GoapAction:
 			return current_item
 	return null
 
+## Returns the agent's [GoapWorldState] instance.
 func get_world_state() -> GoapWorldState:
 	return _world_state
 
 
+## Returns [code]true[/code] if the action's declared effects match the world state.
 func _verify_action_effects(action: GoapAction) -> bool:
 	var effects = action.get_effects()
 	for effect_key in effects:

@@ -1,106 +1,112 @@
-## Base class for GOAP goals using dictionary-based desired state.
+## Base class for all GOAP goals.
 ##
-## Goal Execution Model:
-## 1. The planner creates a plan to satisfy this goal's desired_state
-## 2. Actions in the plan are executed sequentially by the agent
-## 3. After plan completion, perform() is called continuously until it returns true
-## 4. When perform() returns true, on_goal_achieved() is called once
-## 5. If planning fails, on_goal_failed() is called once
-##
-## Key Points:
-## - perform() should contain the ongoing goal logic and return true when complete
-## - on_goal_achieved() and on_goal_failed() are event callbacks, not continuous execution
-## - Goals should handle their own timeouts and failure conditions in perform()
-## - Use desired_state dictionary to specify what world state the plan should achieve
-
+## A goal defines a [member desired_state] — a set of world-state conditions
+## the planner must satisfy. The planner builds a chain of [GoapAction]s that
+## transitions the current [GoapWorldState] into the desired one.[br][br]
+## [b]Lifecycle:[/b][br]
+## 1. [method enter] — called once when the agent selects this goal.[br]
+## 2. The planner builds a plan; actions execute sequentially.[br]
+## 3. [method perform] — called every frame while the plan runs (use for
+##    parallel goal logic like timers).[br]
+## 4. [method on_goal_achieved] — called once when the desired state is met.[br]
+## 5. [method on_goal_failed] — called once if no valid plan can be found.[br]
+## 6. [method exit] — called once when the goal is deselected or finished.[br][br]
+## Override [method is_valid] to enable/disable a goal dynamically (e.g. only
+## pursue "Eat" when the NPC is hungry).
 class_name GoapGoal
 extends Node
 
-## Reference to the actor (entity) that owns this goal
 var _actor
-## Reference to the world state manager
 var _world_state: GoapWorldState
-## Default validation state for the goal
+
+## If [code]true[/code], [method is_valid] returns [code]true[/code] by default.
 var default_valid_state: bool = true
-## Priority of this goal (higher values = higher priority)
+
+## Selection priority — the agent always picks the highest-priority valid goal.
 @export var priority: int = 0
-## Whether this goal is currently enabled and can be selected
+
+## If [code]false[/code], this goal is never considered by the agent.
 @export var enabled: bool = true
-## Base cost of achieving this goal (used for plan evaluation)
-@export var cost: int = 0 
-## Dictionary defining the desired world state this goal wants to achieve
+
+## Base cost used during plan evaluation.
+@export var cost: int = 0
+
+## [code]true[/code] while this goal is the active goal being executed.
 var performing: bool = false
+
+## The world-state conditions that the planner must satisfy.[br]
+## Example: [code]{ "is_fed": true }[/code]
 var desired_state: Dictionary = {}
+
+## The [GoapAgent] that owns this goal.
 var agent: GoapAgent
-## Returns the name of this goal action.
-## @return: The name of this goal
+
+
+## Returns this goal's node name, used as its display identifier.
 func get_action_name(): return self.name
 
-## Initializes the goal with actor and world state references.
-## actor: The entity that owns this goal
-## world_state: The world state manager
+
+## Called by [GoapAgent] during initialization.
 func init(actor, world_state) -> void:
 	_actor = actor
 	_world_state = world_state
 
-## Checks if this goal is currently valid and can be pursued.
-## Returns: True if the goal is valid, false otherwise
+
+## Returns [code]true[/code] if this goal can currently be pursued.[br]
+## Override to add dynamic conditions (e.g. world-state checks).
 func is_valid() -> bool:
 	return default_valid_state
 
-## Gets the priority of this goal.
-## Returns: Priority value (higher = more important)
+
+## Returns the selection [member priority] of this goal.
 func get_priority() -> int:
 	return priority
 
-## Gets the desired world state this goal wants to achieve.
-## Returns: Dictionary containing the desired state key-value pairs
+
+## Returns the [member desired_state] dictionary.
 func get_desired_state() -> Dictionary:
 	return desired_state
 
-## Sets the desired world state for this goal.
-## new_desired_state: Dictionary containing the new desired state
-## Returns: The updated desired state dictionary
+
+## Replaces [member desired_state] and returns the new dictionary.
 func set_desired_state(new_desired_state: Dictionary) -> Dictionary:
 	desired_state = new_desired_state
 	return desired_state
 
-## Gets the cost of achieving this goal.
-## _blackboard: Current world state and context (unused in base implementation)
-## Returns: Cost value for plan evaluation
+
+## Returns the planning [member cost] for this goal.
 func get_cost(_blackboard) -> int:
 	return cost
 
-## Called once when the goal is first selected and becomes active.
-## Override this method to initialize goal-specific state or setup.
+
+## Called once when the agent selects this goal.[br]
+## Override to initialize goal-specific state.
 func enter() -> void:
 	performing = true
 
 
-## Called once when the goal is deselected or completed.
-## Override this method to cleanup goal-specific state or resources.
+## Called once when the goal is deselected or completed.[br]
+## Override to clean up goal-specific state.
 func exit() -> void:
 	performing = false
-	pass
 
 
-## Performs the goal's ongoing execution logic.
-## Called continuously after the action plan is completed until it returns true.
-## _delta: Time since last frame (unused in base implementation)
+## Called every frame while the plan is running.[br]
+## Use for parallel goal logic (timers, monitoring, etc.).
 func perform(_delta) -> void:
 	pass
 
+
+## Called before planning begins. Override for pre-plan setup.
 func prepare() -> void:
 	pass
 
-func get_stare_duration() -> float:
-	return 1.0
 
-func get_interest_point() -> Node2D:
-	return null
-
+## Called once when all desired-state conditions are met.
 func on_goal_achieved() -> void:
 	pass
 
+
+## Called once if the planner cannot find a valid plan.
 func on_goal_failed() -> void:
 	pass

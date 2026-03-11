@@ -1,3 +1,8 @@
+## Editor debugger plugin that receives GOAP runtime data from running agents.
+##
+## Registers as an [EditorDebuggerPlugin] and captures messages prefixed with
+## [code]goap_debug:[/code]. Supports multiple agents via an [OptionButton]
+## selector — each agent's state is cached independently so switching is instant.
 @tool
 extends EditorDebuggerPlugin
 

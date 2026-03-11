@@ -1,95 +1,108 @@
-## Base class for GOAP actions.
+## Base class for all GOAP actions.
 ##
-## Actions represent atomic operations that can be performed to change the world state.
-## Each action has preconditions (what must be true to execute) and effects (what changes after execution).
-## Actions are executed sequentially as part of a plan to achieve a goal.
+## Actions are the building blocks of GOAP plans. Each action declares
+## [member preconditions] (what must be true before it can run) and
+## [member effects] (what world-state changes it produces).[br][br]
+## The planner chains actions together so that one action's effects satisfy
+## the next action's preconditions, ultimately reaching a [GoapGoal]'s
+## desired state.[br][br]
+## [b]Lifecycle:[/b][br]
+## 1. [method enter] — called once when the agent starts this action.[br]
+## 2. [method perform] — called every frame; return [code]true[/code] when done.[br]
+## 3. [method exit] — called once after [method perform] returns [code]true[/code],
+##    or when the action is interrupted by a goal change.
 class_name GoapAction
 extends Node
 
-## Reference to the world state for reading current state and applying effects
 var _world_state: GoapWorldState
-## The actor (entity) that will perform this action
 var _actor
-## Reference to the GOAP agent managing this action
+
+## The [GoapAgent] that owns this action.
 var agent: GoapAgent
+
+## Shortcut to the agent's currently active [GoapGoal].
 var goal: GoapGoal:
 	get:
 		return agent._current_goal
-## Dictionary of state changes this action will apply when completed
+
+## World-state changes this action produces when completed.
+## Keys are state names, values are the target values.
 var effects: Dictionary = {}
-## Dictionary of conditions that must be met for this action to be valid
+
+## World-state conditions that must be satisfied before this action can run.
+## Keys are state names, values are the required values.
 var preconditions: Dictionary = {}
-## Base cost of executing this action (lower is better for planning)
+
+## Planning cost — lower values make the planner prefer this action.
 @export var cost: int = 1
-## Whether this action is currently enabled and available for use
+
+## If [code]false[/code], the planner will skip this action entirely.
 @export var enabled: bool = true
 
 
-## Initializes the action with actor and world state references.
-## @param actor: The entity that will perform this action
-## @param world_state: The world state system for reading/writing state
+## Called by [GoapAgent] during initialization. Stores references to the
+## owning actor node and the shared [GoapWorldState].
 func init(actor, world_state) -> void:
 	_actor = actor
 	_world_state = world_state
 
 
-## Gets the display name of this action.
-## @return: The node name as the action identifier
+## Returns this action's node name, used as its display identifier.
 func get_action_name(): return self.name
 
 
-## Checks if this action is currently valid and can be considered for planning.
-## @return: True if the action is enabled and can be used
+## Returns [code]true[/code] if this action can be used in planning.
+## Override to add dynamic validation (e.g. cooldowns, resource checks).
 func is_valid() -> bool:
 	return enabled
 
 
-## Gets the cost of executing this action.
-## @param _blackboard: Current planning context (unused in base implementation)
-## @return: The cost value for planning calculations
+## Returns the cost of this action for plan evaluation.
+## Override to make cost context-dependent.
 func get_cost(_blackboard) -> int:
 	return 1000
 
 
-## Gets the preconditions required for this action to execute.
-## @return: Dictionary of state conditions that must be satisfied
+## Returns the [member preconditions] dictionary.
 func get_preconditions() -> Dictionary:
 	return preconditions
 
 
-## Gets the effects this action will have on the world state.
-## @return: Dictionary of state changes this action will apply
+## Returns the [member effects] dictionary.
 func get_effects() -> Dictionary:
 	return effects
 
 
-## Applies this action's effects to the world state.
-## Called automatically when the action completes successfully.
+## Writes [param _effects] into the [GoapWorldState].
+## Called automatically when the action completes.
 func set_effects(_effects) -> void:
 	for effect in _effects.keys():
 		_world_state.set_state(effect, _effects[effect])
 
 
-
-## Called when the action is entered (started by the agent).
-## Override to implement custom enter logic.
+## Called once when the agent begins executing this action.
+## Override to set up movement targets, animations, etc.
 func enter() -> void:
 	pass
 
-## Called when the action is exited (finished or interrupted).
-## Override to implement custom exit logic.
+
+## Called once when this action finishes or is interrupted.
+## Override to clean up resources.
 func exit() -> void:
 	pass
 
-## Executes the action logic for one frame.
-## Override this method to implement the actual action behavior.
-## @param _delta: Time elapsed since last frame
-## @return: True when the action is complete, false to continue next frame
+
+## Called every frame while this action is active.[br]
+## Return [code]true[/code] to signal completion and advance the plan.
 func perform(_delta) -> bool:
 	return false
 
+
+## Convenience wrapper for [method GoapWorldState.get_state].
 func get_state(value, default):
 	return _world_state.get_state(value, default)
 
+
+## Convenience wrapper for [method GoapWorldState.set_state].
 func set_state(key, value):
 	return _world_state.set_state(key, value)
