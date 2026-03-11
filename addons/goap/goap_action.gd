@@ -11,6 +11,7 @@
 ## 2. [method perform] — called every frame; return [code]true[/code] when done.[br]
 ## 3. [method exit] — called once after [method perform] returns [code]true[/code],
 ##    or when the action is interrupted by a goal change.
+@icon("res://addons/goap/icons/goap_action.svg")
 class_name GoapAction
 extends Node
 

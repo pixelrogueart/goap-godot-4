@@ -8,6 +8,7 @@
 ## - [signal plan_changed] — emitted when a new action plan is generated.[br]
 ## - [signal goal_changed] — emitted when the active goal switches.[br]
 ## - [signal action_changed] — emitted when the currently running action changes.
+@icon("res://addons/goap/icons/goap_agent.svg")
 class_name GoapAgent
 extends Node
 

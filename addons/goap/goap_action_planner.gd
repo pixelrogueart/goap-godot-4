@@ -5,6 +5,7 @@
 ## the cheapest sequence whose effects satisfy the desired state.[br][br]
 ## You don't interact with this class directly — [GoapAgent] creates and
 ## manages it internally.
+@icon("res://addons/goap/icons/goap_action_planner.svg")
 class_name GoapActionPlanner
 extends Node
 

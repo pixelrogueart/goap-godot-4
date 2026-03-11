@@ -4,6 +4,7 @@
 ## and values can be any [Variant] type ([bool], [int], [float], [Vector2], etc.).[br]
 ## The planner reads world state to build a blackboard, and actions modify it
 ## via [method set_state] to reflect changes in the environment.
+@icon("res://addons/goap/icons/goap_world_state.svg")
 class_name GoapWorldState
 extends Node
 

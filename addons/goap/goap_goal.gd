@@ -13,6 +13,7 @@
 ## 6. [method exit] — called once when the goal is deselected or finished.[br][br]
 ## Override [method is_valid] to enable/disable a goal dynamically (e.g. only
 ## pursue "Eat" when the NPC is hungry).
+@icon("res://addons/goap/icons/goap_goal.svg")
 class_name GoapGoal
 extends Node
 
