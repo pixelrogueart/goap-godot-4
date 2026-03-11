@@ -39,6 +39,24 @@ var _current_world_state: Dictionary = {}
 func _ready() -> void:
 	_build_ui()
 
+func clear() -> void:
+	_current_goal_name = ""
+	_current_action_name = ""
+	_current_plan = []
+	_current_step = 0
+	_current_total = 0
+	_current_world_state = {}
+	_state_rows.clear()
+	if _world_state_list:
+		for child in _world_state_list.get_children():
+			child.queue_free()
+	if _graph:
+		_graph.clear_connections()
+		for key in _graph_node_map:
+			if is_instance_valid(_graph_node_map[key]):
+				_graph_node_map[key].queue_free()
+		_graph_node_map.clear()
+
 func _build_ui() -> void:
 	add_theme_constant_override("separation", 0)
 	size_flags_vertical = SIZE_EXPAND_FILL

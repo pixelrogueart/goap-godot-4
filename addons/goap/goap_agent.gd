@@ -1,6 +1,7 @@
 class_name GoapAgent
 extends Node
 
+const DEBUG_PREFIX := "goap_debug"
 
 signal plan_changed(new_plan: Array)
 signal goal_changed(new_goal: GoapGoal)
@@ -9,6 +10,7 @@ signal action_changed(new_action: GoapAction)
 
 @export var actions_node: Node 
 @export var goals_node: Node
+@export var debug_enabled := true
 
 var _goals = []
 var _current_goal
@@ -20,6 +22,7 @@ var _action_planner: GoapActionPlanner
 var _finished_last_plan = false
 var _last_blackboard = {}
 var previous_action: GoapAction = null
+var _debug_id := ""
 
 
 func process(delta):
@@ -91,6 +94,7 @@ func process(delta):
 func init(actor):
 	_actor = actor
 	_world_state = GoapWorldState.new()
+	_debug_id = str(get_path())
 	var actions = []
 	for child in goals_node.get_children():
 		if not child is GoapGoal:
@@ -110,6 +114,9 @@ func init(actor):
 
 	for action in actions:
 		action.init(_actor, _world_state)
+
+	_connect_debug_signals()
+	_send_debug_register(actions)
 
 
 func _get_best_goal():
@@ -232,3 +239,71 @@ func _verify_action_effects(action: GoapAction) -> bool:
 			return false
 	
 	return true
+
+
+func _send_debug(msg_type: String, data: Array) -> void:
+	if not debug_enabled or not EngineDebugger.is_active():
+		return
+	EngineDebugger.send_message(DEBUG_PREFIX + ":" + msg_type, [_debug_id] + data)
+
+
+func _connect_debug_signals():
+	goal_changed.connect(_on_debug_goal_changed)
+	plan_changed.connect(_on_debug_plan_changed)
+	action_changed.connect(_on_debug_action_changed)
+	_world_state.state_updated.connect(_on_debug_world_state_updated)
+
+
+func _send_debug_register(actions: Array):
+	var goal_data := []
+	for g in _goals:
+		goal_data.append({
+			"name": g.get_action_name(),
+			"priority": g.get_priority(),
+			"desired_state": g.get_desired_state(),
+			"cost": g.get_cost({}),
+		})
+	var action_data := []
+	for a in actions:
+		action_data.append({
+			"name": a.get_action_name(),
+			"cost": a.cost,
+			"preconditions": a.get_preconditions(),
+			"effects": a.get_effects(),
+		})
+	_send_debug("registry", [goal_data, action_data])
+
+
+func _on_debug_goal_changed(new_goal: GoapGoal):
+	if new_goal:
+		_send_debug("goal", [new_goal.get_action_name(), new_goal.get_priority(), new_goal.get_desired_state()])
+	else:
+		_send_debug("goal", ["", 0, {}])
+
+
+func _on_debug_plan_changed(plan: Array):
+	var plan_data := []
+	for item in plan:
+		if item is GoapAction:
+			plan_data.append({
+				"name": item.get_action_name(),
+				"cost": item.cost,
+				"preconditions": item.get_preconditions(),
+				"effects": item.get_effects(),
+			})
+		elif item is GoapGoal:
+			plan_data.append({
+				"name": item.get_action_name(),
+				"cost": item.cost,
+			})
+	_send_debug("plan", [plan_data])
+
+
+func _on_debug_action_changed(new_action: GoapAction):
+	var action_name = new_action.get_action_name() if new_action else ""
+	_send_debug("action", [action_name])
+	_send_debug("step", [_current_plan_step, _current_plan.size()])
+
+
+func _on_debug_world_state_updated():
+	_send_debug("world_state", [_world_state._state.duplicate()])

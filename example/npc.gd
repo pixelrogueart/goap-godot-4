@@ -96,8 +96,10 @@ func _update_needs(delta):
 	tiredness = min(tiredness + delta * TIREDNESS_RATE, 1.0)
 	var ws = _agent.get_world_state()
 	if ws:
-		ws.set_state(ExampleStateKeys.IS_HUNGRY, hunger > HUNGER_THRESHOLD)
-		ws.set_state(ExampleStateKeys.IS_TIRED, tiredness > TIREDNESS_THRESHOLD)
+		if hunger > HUNGER_THRESHOLD:
+			ws.set_state(ExampleStateKeys.IS_HUNGRY, true)
+		if tiredness > TIREDNESS_THRESHOLD:
+			ws.set_state(ExampleStateKeys.IS_TIRED, true)
 
 
 func _update_fire(delta):
