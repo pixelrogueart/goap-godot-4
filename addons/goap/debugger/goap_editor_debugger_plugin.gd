@@ -23,8 +23,8 @@ func _capture(message: String, data: Array, _session_id: int) -> bool:
 	if !_panel or data.size() < 1:
 		return false
 
-	var agent_id: String = data[0]
-	var payload: Array = data.slice(1)
+	var agent_id := str(data[0])
+	var payload := data.slice(1)
 	var msg_type = message.replace(MSG_PREFIX + ":", "")
 
 	if msg_type == "registry":
