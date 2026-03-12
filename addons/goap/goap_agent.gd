@@ -273,6 +273,10 @@ func _verify_action_effects(action: GoapAction) -> bool:
 	return true
 
 
+func debug_select() -> void:
+	_send_debug("select", [])
+
+
 func _send_debug(msg_type: String, data: Array) -> void:
 	if not debug_enabled or not EngineDebugger.is_active():
 		return

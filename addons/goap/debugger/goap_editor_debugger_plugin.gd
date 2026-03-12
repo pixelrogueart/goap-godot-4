@@ -20,7 +20,7 @@ func _has_capture(prefix: String) -> bool:
 	return prefix == MSG_PREFIX
 
 func _capture(message: String, data: Array, _session_id: int) -> bool:
-	if !_panel or data.size() < 1:
+	if data.size() < 1:
 		return false
 
 	var agent_id := str(data[0])
@@ -29,6 +29,21 @@ func _capture(message: String, data: Array, _session_id: int) -> bool:
 
 	if msg_type == "registry":
 		_register_agent(agent_id, payload)
+		return true
+
+	if msg_type == "select":
+		if _agents.has(agent_id):
+			_select_agent(agent_id)
+			_refresh_agent_list()
+		return true
+
+	if msg_type == "unselect":
+		if agent_id == _selected_agent_id:
+			_selected_agent_id = ""
+			if _panel and _panel.has_method("clear"):
+				_panel.clear()
+			if _agent_selector:
+				_agent_selector.select(-1)
 		return true
 
 	if not _agents.has(agent_id):
@@ -53,7 +68,7 @@ func _capture(message: String, data: Array, _session_id: int) -> bool:
 		_:
 			return false
 
-	if agent_id == _selected_agent_id:
+	if _panel and agent_id == _selected_agent_id:
 		_push_to_panel(agent_data, msg_type)
 
 	return true
