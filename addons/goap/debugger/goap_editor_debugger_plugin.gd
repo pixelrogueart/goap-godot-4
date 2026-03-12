@@ -7,14 +7,18 @@
 extends EditorDebuggerPlugin
 
 const MSG_PREFIX := "goap_debug"
-const PanelScene = preload("res://addons/goap/debugger/goap_editor_debug_panel.gd")
-const ExplorerScene = preload("res://addons/goap/debugger/goap_planner_explorer.gd")
 
 var _panel: Control
 var _explorer: Control
 var _agent_selector: OptionButton
 var _agents: Dictionary = {}
 var _selected_agent_id := ""
+
+func bind_bottom_panel(bottom_panel) -> void:
+	_panel = bottom_panel.debug_panel
+	_explorer = bottom_panel.explorer
+	_agent_selector = bottom_panel.agent_selector
+	_agent_selector.item_selected.connect(_on_agent_selected)
 
 func _has_capture(prefix: String) -> bool:
 	return prefix == MSG_PREFIX
@@ -154,39 +158,10 @@ func _on_agent_selected(idx: int):
 	_select_agent(agent_id)
 
 
-func _setup_session(session_id: int) -> void:
-	var session = get_session(session_id)
+func _setup_session(_session_id: int) -> void:
 	_agents.clear()
 	_selected_agent_id = ""
-
-	var root = VBoxContainer.new()
-	root.name = "GOAP"
-	root.size_flags_vertical = Control.SIZE_EXPAND_FILL
-
-	var toolbar = HBoxContainer.new()
-	toolbar.add_theme_constant_override("separation", 8)
-	root.add_child(toolbar)
-
-	var lbl = Label.new()
-	lbl.text = "Agent:"
-	lbl.add_theme_font_size_override("font_size", 13)
-	toolbar.add_child(lbl)
-
-	_agent_selector = OptionButton.new()
-	_agent_selector.custom_minimum_size.x = 300
-	_agent_selector.item_selected.connect(_on_agent_selected)
-	toolbar.add_child(_agent_selector)
-
-	var tabs = TabContainer.new()
-	tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	root.add_child(tabs)
-
-	_panel = PanelScene.new()
-	_panel.name = "Runtime"
-	tabs.add_child(_panel)
-
-	_explorer = ExplorerScene.new()
-	_explorer.name = "Planner"
-	tabs.add_child(_explorer)
-
-	session.add_session_tab(root)
+	if _panel and _panel.has_method("clear"):
+		_panel.clear()
+	if _agent_selector:
+		_agent_selector.clear()
