@@ -17,6 +17,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[skip tag]') && (contains(github.event.head_commit.message, 'fix') || contains(github.event.head_commit.message, 'feat'))"
     outputs:
       new_version: ${{ steps.bump.outputs.new_version }}
+      commit_sha: ${{ steps.tag.outputs.commit_sha }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,6 +45,7 @@ jobs:
           echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Commit, tag and push
+        id: tag
         run: |
           git config user.email "ci@noreply.github.com"
           git config user.name "GitHub Actions"
@@ -51,6 +53,7 @@ jobs:
           git commit -m "chore: bump version to ${{ steps.bump.outputs.new_version }} [skip ci]"
           git tag -a "v${{ steps.bump.outputs.new_version }}" -m "Release v${{ steps.bump.outputs.new_version }}"
           git push origin main --tags
+          echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
   publish-asset-library:
     runs-on: ubuntu-latest
@@ -60,14 +63,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Resolve version
+      - name: Resolve version and SHA
         id: version
         run: |
           if [ -n "${{ needs.bump-version.outputs.new_version }}" ]; then
             echo "version=${{ needs.bump-version.outputs.new_version }}" >> $GITHUB_OUTPUT
+            echo "commit_sha=${{ needs.bump-version.outputs.commit_sha }}" >> $GITHUB_OUTPUT
           else
             VERSION=$(grep "^version=" "$PLUGIN_CFG" | cut -d'"' -f2)
             echo "version=${VERSION}" >> $GITHUB_OUTPUT
+            echo "commit_sha=$(git rev-list -n 1 v${VERSION})" >> $GITHUB_OUTPUT
           fi
 
       - name: Publish to Godot Asset Library
@@ -77,6 +82,7 @@ jobs:
           ASSET_LIB_ID: ${{ secrets.ASSET_LIB_ID }}
           GODOT_VERSION: ${{ env.GODOT_VERSION }}
           REPO: ${{ github.repository }}
+          COMMIT_SHA: ${{ steps.version.outputs.commit_sha }}
         run: |
           VERSION="${{ steps.version.outputs.version }}"
 
@@ -95,7 +101,7 @@ jobs:
               -F "version_string=${VERSION}" \
               -F "godot_version=${GODOT_VERSION}" \
               -F "download_provider=GitHub" \
-              -F "download_commit=v${VERSION}" \
+              -F "download_commit=${COMMIT_SHA}" \
               -F "browse_url=https://github.com/${REPO}")
 
           HTTP_STATUS=$(echo "${EDIT_RESPONSE}" | grep "HTTP_STATUS:" | cut -d: -f2)
