@@ -79,23 +79,29 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          DOWNLOAD_URL="https://github.com/${REPO}/archive/refs/tags/v${VERSION}.zip"
 
-          TOKEN=$(curl -sSf -X POST "https://godotengine.org/asset-library/api/login" \
+          TOKEN=$(curl -sS -X POST "https://godotengine.org/asset-library/api/login" \
               -F "username=${ASSET_LIB_USERNAME}" \
               -F "password=${ASSET_LIB_PASSWORD}" \
               | jq -r '.token')
 
           if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
-            echo "Asset Library login failed"
+            echo "Asset Library login failed - check ASSET_LIB_USERNAME and ASSET_LIB_PASSWORD secrets"
             exit 1
           fi
 
-          curl -sSf -X POST "https://godotengine.org/asset-library/api/asset/${ASSET_LIB_ID}" \
+          EDIT_RESPONSE=$(curl -sS -w "\nHTTP_STATUS:%{http_code}" -X POST "https://godotengine.org/asset-library/api/asset/${ASSET_LIB_ID}" \
               -F "token=${TOKEN}" \
               -F "version_string=${VERSION}" \
               -F "godot_version=${GODOT_VERSION}" \
+              -F "download_provider=GitHub" \
               -F "download_commit=v${VERSION}" \
-              -F "browse_url=https://github.com/${REPO}"
+              -F "browse_url=https://github.com/${REPO}")
 
+          HTTP_STATUS=$(echo "${EDIT_RESPONSE}" | grep "HTTP_STATUS:" | cut -d: -f2)
+          BODY=$(echo "${EDIT_RESPONSE}" | grep -v "HTTP_STATUS:")
+          echo "HTTP status: ${HTTP_STATUS}"
+          echo "Response: ${BODY}"
+
+          echo "${BODY}" | jq -e '.id' > /dev/null || { echo "Publish failed"; exit 1; }
           echo "Published v${VERSION} to Godot Asset Library"
