@@ -35,3 +35,17 @@ func erase_state(state_name):
 func clear_state():
 	_state = {}
 	state_updated.emit()
+
+
+## Returns [code]true[/code] if [param blackboard_value] satisfies [param desired_value].[br]
+## When [param desired_value] is [bool], non-null/non-zero values are treated as [code]true[/code].
+static func is_satisfied(blackboard_value, desired_value) -> bool:
+	if typeof(desired_value) == TYPE_BOOL:
+		var as_bool := false
+		if blackboard_value != null:
+			match typeof(blackboard_value):
+				TYPE_BOOL: as_bool = blackboard_value
+				TYPE_INT, TYPE_FLOAT: as_bool = blackboard_value != 0
+				_: as_bool = true
+		return as_bool == desired_value
+	return blackboard_value == desired_value

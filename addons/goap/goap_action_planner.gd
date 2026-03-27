@@ -67,20 +67,7 @@ func _build_plans(step, blackboard):
 		var blackboard_value = blackboard.get(s)
 		var desired_value = state[s]
 
-		var is_state_satisfied = false
-		if typeof(desired_value) == TYPE_BOOL:
-
-			var blackboard_as_bool = false
-			if blackboard_value != null:
-				if typeof(blackboard_value) == TYPE_BOOL:
-					blackboard_as_bool = blackboard_value
-				elif typeof(blackboard_value) == TYPE_INT or typeof(blackboard_value) == TYPE_FLOAT:
-					blackboard_as_bool = blackboard_value != 0
-				else:
-					blackboard_as_bool = true 
-			is_state_satisfied = blackboard_as_bool == desired_value
-		else:
-			is_state_satisfied = blackboard_value == desired_value
+		var is_state_satisfied := GoapWorldState.is_satisfied(blackboard_value, desired_value)
 		
 		if is_state_satisfied:
 			state.erase(s)

@@ -84,10 +84,9 @@ func process(delta):
 				blackboard[s] = _world_state._state[s]
 	
 			var desired_state = goal.get_desired_state()
-			var is_already_satisfied = true
-			if desired_state.is_empty(): is_already_satisfied = false
+			var is_already_satisfied = not desired_state.is_empty()
 			for state_key in desired_state:
-				if blackboard.get(state_key) != desired_state[state_key]:
+				if not GoapWorldState.is_satisfied(blackboard.get(state_key), desired_state[state_key]):
 					is_already_satisfied = false
 					break
 			if is_already_satisfied:
