@@ -91,11 +91,11 @@ jobs:
             exit 1
           fi
 
-          curl -sSf -X POST "https://godotengine.org/asset-library/api/asset/${ASSET_LIB_ID}/edit" \
+          curl -sSf -X POST "https://godotengine.org/asset-library/api/asset/${ASSET_LIB_ID}" \
               -F "token=${TOKEN}" \
               -F "version_string=${VERSION}" \
               -F "godot_version=${GODOT_VERSION}" \
-              -F "download_url=${DOWNLOAD_URL}" \
-              -F "download_commit=v${VERSION}"
+              -F "download_commit=v${VERSION}" \
+              -F "browse_url=https://github.com/${REPO}"
 
           echo "Published v${VERSION} to Godot Asset Library"
