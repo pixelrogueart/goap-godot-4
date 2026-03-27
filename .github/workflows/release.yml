@@ -15,8 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: godot
     if: |
-      contains(github.event.head_commit.message, 'fix') ||
-      contains(github.event.head_commit.message, 'feat')
+      !contains(github.event.head_commit.message, '[skip tag]') && (
+        contains(github.event.head_commit.message, 'fix') ||
+        contains(github.event.head_commit.message, 'feat')
+      )
     outputs:
       new_version: ${{ steps.bump.outputs.new_version }}
     steps:
@@ -58,8 +60,22 @@ jobs:
     runs-on: ubuntu-latest
     environment: godot
     needs: bump-version
+    if: always() && (
+      needs.bump-version.result == 'success' ||
+      contains(github.event.head_commit.message, '[skip tag]')
+    )
     steps:
       - uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: version
+        run: |
+          if [ -n "${{ needs.bump-version.outputs.new_version }}" ]; then
+            echo "version=${{ needs.bump-version.outputs.new_version }}" >> $GITHUB_OUTPUT
+          else
+            VERSION=$(grep "^version=" "$PLUGIN_CFG" | cut -d'"' -f2)
+            echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Publish to Godot Asset Library
         env:
@@ -69,7 +85,7 @@ jobs:
           GODOT_VERSION: ${{ env.GODOT_VERSION }}
           REPO: ${{ github.repository }}
         run: |
-          VERSION="${{ needs.bump-version.outputs.new_version }}"
+          VERSION="${{ steps.version.outputs.version }}"
           DOWNLOAD_URL="https://github.com/${REPO}/archive/refs/tags/v${VERSION}.zip"
 
           TOKEN=$(curl -sSf -X POST "https://godotengine.org/asset-library/api/login" \
@@ -82,7 +98,7 @@ jobs:
             exit 1
           fi
 
-          curl -sSf -X POST "https://godotengine.org/asset-library/api/asset/${ASSET_LIB_ID}" \
+          curl -sSf -X POST "https://godotengine.org/asset-library/api/asset/${ASSET_LIB_ID}/edit" \
               -F "token=${TOKEN}" \
               -F "version_string=${VERSION}" \
               -F "godot_version=${GODOT_VERSION}" \
