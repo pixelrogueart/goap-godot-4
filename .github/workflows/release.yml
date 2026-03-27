@@ -1,0 +1,92 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  PLUGIN_CFG: addons/goap/plugin.cfg
+  GODOT_VERSION: "4.6"
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    environment: godot
+    if: |
+      contains(github.event.head_commit.message, 'fix') ||
+      contains(github.event.head_commit.message, 'feat')
+    outputs:
+      new_version: ${{ steps.bump.outputs.new_version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.CI_PUSH_TOKEN }}
+
+      - name: Bump version
+        id: bump
+        run: |
+          CURRENT=$(grep "^version=" "$PLUGIN_CFG" | cut -d'"' -f2)
+          MAJOR=$(echo "$CURRENT" | cut -d'.' -f1)
+          MINOR=$(echo "$CURRENT" | cut -d'.' -f2)
+          PATCH=$(echo "$CURRENT" | cut -d'.' -f3)
+          PATCH=${PATCH:-0}
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if echo "$COMMIT_MSG" | grep -q "\[major\]"; then
+            MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0
+          elif echo "$COMMIT_MSG" | grep -q "\[minor\]"; then
+            MINOR=$((MINOR + 1)); PATCH=0
+          else
+            PATCH=$((PATCH + 1))
+          fi
+          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          sed -i "s/^version=.*/version=\"${NEW_VERSION}\"/" "$PLUGIN_CFG"
+          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Commit, tag and push
+        run: |
+          git config user.email "ci@noreply.github.com"
+          git config user.name "GitHub Actions"
+          git add "$PLUGIN_CFG"
+          git commit -m "chore: bump version to ${{ steps.bump.outputs.new_version }} [skip ci]"
+          git tag -a "v${{ steps.bump.outputs.new_version }}" -m "Release v${{ steps.bump.outputs.new_version }}"
+          git push origin main --tags
+
+  publish-asset-library:
+    runs-on: ubuntu-latest
+    environment: godot
+    needs: bump-version
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish to Godot Asset Library
+        env:
+          ASSET_LIB_USERNAME: ${{ secrets.ASSET_LIB_USERNAME }}
+          ASSET_LIB_PASSWORD: ${{ secrets.ASSET_LIB_PASSWORD }}
+          ASSET_LIB_ID: ${{ secrets.ASSET_LIB_ID }}
+          GODOT_VERSION: ${{ env.GODOT_VERSION }}
+          REPO: ${{ github.repository }}
+        run: |
+          VERSION="${{ needs.bump-version.outputs.new_version }}"
+          DOWNLOAD_URL="https://github.com/${REPO}/archive/refs/tags/v${VERSION}.zip"
+
+          TOKEN=$(curl -sSf -X POST "https://godotengine.org/asset-library/api/login" \
+              -F "username=${ASSET_LIB_USERNAME}" \
+              -F "password=${ASSET_LIB_PASSWORD}" \
+              | jq -r '.token')
+
+          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+            echo "Asset Library login failed"
+            exit 1
+          fi
+
+          curl -sSf -X POST "https://godotengine.org/asset-library/api/asset/${ASSET_LIB_ID}" \
+              -F "token=${TOKEN}" \
+              -F "version_string=${VERSION}" \
+              -F "godot_version=${GODOT_VERSION}" \
+              -F "download_url=${DOWNLOAD_URL}" \
+              -F "download_commit=v${VERSION}"
+
+          echo "Published v${VERSION} to Godot Asset Library"

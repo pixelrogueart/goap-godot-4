@@ -201,6 +201,29 @@ Run `example/main.tscn` to see it in action.
 
 ---
 
+## Contributing
+
+### Versioning
+
+Versions are bumped automatically when you push to `main`. The increment type is controlled by your commit message:
+
+| Commit message contains | Example result |
+|---|---|
+| `[major]` | `1.1.1` → `2.0.0` |
+| `[minor]` | `1.1.1` → `1.2.0` |
+| _(anything else)_ | `1.1.1` → `1.1.2` |
+
+Examples:
+```
+fix: player stuck in loop   → 1.1.2
+feat: add blackboard [minor] → 1.2.0
+breaking API change [major]  → 2.0.0
+```
+
+The pipeline only triggers when the commit message contains `fix` or `feat`. Pushes with other messages (e.g. `docs:`, `chore:`) are ignored.
+
+---
+
 ## License
 
 MIT
