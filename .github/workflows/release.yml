@@ -14,11 +14,7 @@ jobs:
   bump-version:
     runs-on: ubuntu-latest
     environment: godot
-    if: |
-      !contains(github.event.head_commit.message, '[skip tag]') && (
-        contains(github.event.head_commit.message, 'fix') ||
-        contains(github.event.head_commit.message, 'feat')
-      )
+    if: "!contains(github.event.head_commit.message, '[skip tag]') && (contains(github.event.head_commit.message, 'fix') || contains(github.event.head_commit.message, 'feat'))"
     outputs:
       new_version: ${{ steps.bump.outputs.new_version }}
     steps:
@@ -60,10 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: godot
     needs: bump-version
-    if: always() && (
-      needs.bump-version.result == 'success' ||
-      contains(github.event.head_commit.message, '[skip tag]')
-    )
+    if: always() && (needs.bump-version.result == 'success' || contains(github.event.head_commit.message, '[skip tag]'))
     steps:
       - uses: actions/checkout@v4
 
