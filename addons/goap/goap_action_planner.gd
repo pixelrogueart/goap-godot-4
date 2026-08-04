@@ -90,24 +90,27 @@ func _build_plans(step, blackboard):
 
 		if should_use_action:
 			var preconditions = action.get_preconditions()
-			
+
 			var conflict = false
+			var next_state = desired_state.duplicate()
 			for p in preconditions:
-				if desired_state.has(p) and desired_state[p] != preconditions[p]:
-					conflict = true
-					break
+				if next_state.has(p):
+					if next_state[p] != preconditions[p]:
+						conflict = true
+						break
+				else:
+					next_state[p] = preconditions[p]
 
 			if conflict:
-				continue # this action would contradict a still-open requirement; skip it
-
+				continue
 
 			var s = {
 				"action": action,
-				"state": desired_state,
+				"state": next_state,
 				"children": []
 				}
 
-			if desired_state.is_empty() or _build_plans(s, blackboard.duplicate()):
+			if next_state.is_empty() or _build_plans(s, blackboard.duplicate()):
 				step.children.push_back(s)
 				has_followup = true
 
