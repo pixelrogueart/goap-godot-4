@@ -90,8 +90,16 @@ func _build_plans(step, blackboard):
 
 		if should_use_action:
 			var preconditions = action.get_preconditions()
+			
+			var conflict = false
 			for p in preconditions:
-				desired_state[p] = preconditions[p]
+				if desired_state.has(p) and desired_state[p] != preconditions[p]:
+					conflict = true
+					break
+
+			if conflict:
+				continue # this action would contradict a still-open requirement; skip it
+
 
 			var s = {
 				"action": action,
@@ -114,7 +122,7 @@ func _transform_tree_into_array(p, blackboard):
 		var cost = 0
 		if p.action.has_method("get_cost"):
 			cost = p.action.get_cost(blackboard)
-		plans.push_back({ "actions": [p.action], "cost": cost })
+		plans.push_back({"actions": [p.action], "cost": cost})
 		return plans
 
 	for c in p.children:
