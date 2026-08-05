@@ -158,7 +158,15 @@ func _on_agent_selected(idx: int):
 	_select_agent(agent_id)
 
 
-func _setup_session(_session_id: int) -> void:
+func _setup_session(session_id: int) -> void:
+	# _setup_session fires once per debugger session tab, which the editor
+	# reuses across game runs, so clearing must happen on every session start.
+	var session := get_session(session_id)
+	session.started.connect(_on_session_started)
+	_on_session_started()
+
+
+func _on_session_started() -> void:
 	_agents.clear()
 	_selected_agent_id = ""
 	if _panel and _panel.has_method("clear"):
