@@ -90,16 +90,27 @@ func _build_plans(step, blackboard):
 
 		if should_use_action:
 			var preconditions = action.get_preconditions()
+
+			var conflict = false
+			var next_state = desired_state.duplicate()
 			for p in preconditions:
-				desired_state[p] = preconditions[p]
+				if next_state.has(p):
+					if next_state[p] != preconditions[p]:
+						conflict = true
+						break
+				else:
+					next_state[p] = preconditions[p]
+
+			if conflict:
+				continue
 
 			var s = {
 				"action": action,
-				"state": desired_state,
+				"state": next_state,
 				"children": []
 				}
 
-			if desired_state.is_empty() or _build_plans(s, blackboard.duplicate()):
+			if next_state.is_empty() or _build_plans(s, blackboard.duplicate()):
 				step.children.push_back(s)
 				has_followup = true
 
@@ -114,7 +125,7 @@ func _transform_tree_into_array(p, blackboard):
 		var cost = 0
 		if p.action.has_method("get_cost"):
 			cost = p.action.get_cost(blackboard)
-		plans.push_back({ "actions": [p.action], "cost": cost })
+		plans.push_back({"actions": [p.action], "cost": cost})
 		return plans
 
 	for c in p.children:
