@@ -170,7 +170,9 @@ When `debug_enabled` is `true` on a `GoapAgent`, runtime data is sent to the edi
 
 ### Multi-Agent
 
-If multiple agents exist in the scene, use the **Agent** dropdown at the top of the GOAP tab to switch between them. Each agent's state is cached, so switching is instant.
+If multiple agents exist in the scene, use the **Agent** dropdown at the top of the GOAP tab to switch between them. Each agent's state is cached, so switching is instant. 
+
+*Note: May need to change the GoapAgent's node name in order to see multiple agents.*
 
 ---
 
