@@ -6,6 +6,10 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   PLUGIN_CFG: addons/goap/plugin.cfg
   GODOT_VERSION: "4.6"
@@ -51,8 +55,16 @@ jobs:
           git config user.name "GitHub Actions"
           git add "$PLUGIN_CFG"
           git commit -m "chore: bump version to ${{ steps.bump.outputs.new_version }} [skip ci]"
+          # Retry with rebase: another commit may land on main between checkout and push.
+          # The tag is only created after the branch push succeeds so it can never
+          # point at a commit that is not on main.
+          for i in 1 2 3; do
+            if git push origin HEAD:main; then break; fi
+            if [ "$i" = "3" ]; then echo "Push failed after 3 attempts"; exit 1; fi
+            git pull --rebase origin main
+          done
           git tag -a "v${{ steps.bump.outputs.new_version }}" -m "Release v${{ steps.bump.outputs.new_version }}"
-          git push origin main --tags
+          git push origin "v${{ steps.bump.outputs.new_version }}"
           echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
   publish-asset-library:
