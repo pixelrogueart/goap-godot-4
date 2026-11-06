@@ -159,7 +159,7 @@ func _get_best_goal():
 ## Steps through the current action plan, executing one action at a time.
 func _follow_plan(plan, delta):
 	if plan.size() == 0:
-		print("Warning: _follow_plan called with empty plan")
+		# An empty plan just ends the goal; the agent loop picks a new one next tick, so this is not worth a log line.
 		_finished_last_plan = true
 		return
 
